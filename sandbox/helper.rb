@@ -1,7 +1,8 @@
-$LOAD_PATH.unshift( '../../sport.db/parser/lib' )
-$LOAD_PATH.unshift( '../../sport.db/parser-rsssf/lib' )
+## $LOAD_PATH.unshift( '../../sport.db/parser/lib' )
+## $LOAD_PATH.unshift( '../../sport.db/parser-rsssf/lib' )
 
-$LOAD_PATH.unshift( './lib' )
+
+$LOAD_PATH.unshift( './rsssf/lib' )
 require 'rsssf'
 
 

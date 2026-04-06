@@ -1,0 +1,16 @@
+###
+#  add (web) local cache and tmp and o(utput) dirs
+cache/
+tmp/
+tmp2/
+o/
+
+#########
+### ignore logs and errors
+logs.txt
+logs.2.txt
+logs.html
+error.txt
+error.html
+
+
