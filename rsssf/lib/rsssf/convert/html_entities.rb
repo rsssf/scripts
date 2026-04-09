@@ -75,7 +75,7 @@ class PageConverter
 
 
 
-  def convert_html_entities( html )
+  def self.convert_html_entities( html )
     ## check for html entities
     html = html.gsub( "&auml;", 'ä' )
     html = html.gsub( "&ouml;", 'ö' )
@@ -126,7 +126,8 @@ class PageConverter
     
     html
   end
-
+  def convert_html_entities( html ) self.class.convert_html_entities( html ); end
+ 
 
 
 

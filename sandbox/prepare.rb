@@ -24,6 +24,7 @@ code = args.shift  ## get first argument
 
 outdir = "./tmp3"
 
+## outdir = "../brazil/tables"
 ## outdir = "../england/tables"
 ## outdir = "../europe/germany/tables"
 ## outdir = "../europe/spain/tables"

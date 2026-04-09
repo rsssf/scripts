@@ -56,7 +56,7 @@ EOS
 
 ###################
 # more helpers
-def log( msg )
+def self.log( msg )
   ## append msg to ./logs.txt  
   ##     use ./errors.txt - why? why not?
   File.open( './logs.txt', 'a:utf-8' ) do |f|
@@ -64,6 +64,7 @@ def log( msg )
     f.write( "\n" ) 
   end
 end
+def log( msg ) self.class.log( msg ); end
 
 
 
