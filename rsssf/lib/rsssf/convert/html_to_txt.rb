@@ -96,18 +96,22 @@ def html_to_txt( html, url: )
 
   ## remove i(talics)
   ##    use non-greedy match as default? e.g. .*? - why? why not?
- 
-  html = html.gsub( /<I>([^<]+)<\/I>/im ) do |_|
+  ##    or greedy w/  ([^<]+)
+  html = html.gsub( /<I>(.*?)<\/I>/im ) do |_|
     puts " remove italic (i) >#{$1}<"
     "#{$1}"
   end
 
+  html = html.gsub( /<U>(.*?)<\/U>/im ) do |_|
+    puts " remove underline (u) >#{$1}<"
+    "#{$1}"
+  end
 
   ## remove b   - note: might include anchors (thus, call after anchors)
   ###   use non-greedy match as default? e.g. .*? - why? why not?
-  html = html.gsub( /<B>([^<]+)<\/B>/im ) do |_|
+  ## was - "**#{$1}**"
+  html = html.gsub( /<B>(.*?)<\/B>/im ) do |_|
     puts " remove bold (b) >#{$1}<"
-    ## "**#{$1}**"
     "#{$1}"  
   end
 

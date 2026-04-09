@@ -28,6 +28,8 @@ class PageConverter
  ### smart quotes quick fixes   
  ### convert all "smart" quote to (standard) single and double quotes
  ##  D´Alessandro   =>  D'Alessandro 
+ ##    81´ and 88'   =>  81' and 88' 
+
   
     html = html.gsub( /[´’‘]/, "'" )    
     html = html.gsub( /[“”]/,  '"' )

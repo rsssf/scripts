@@ -1,0 +1,65 @@
+
+##
+## note - starting in oost2010.html
+##   the page incl. charset   but it really is windows-1252
+#       if you find any (char) encoding errors, please report!
+#
+#   one checkpoint is 
+# FC Red Bull Salzburg        2-1 Kapfenberger SV             [aet]
+#  [Radosevic 20, Haidara 110; João Victor 8] 
+#    in tableso/oost2017.html   it should be João (windows-1252) and 
+#                                         NOT Joăo (iso-8859-2) 
+
+page, encoding
+tableso/oost75.html,  windows-1252
+tableso/oost76.html,  windows-1252
+tableso/oost77.html,  windows-1252
+tableso/oost78.html,  windows-1252
+tableso/oost79.html,  windows-1252
+tableso/oost80.html,  windows-1252
+tableso/oost81.html,  windows-1252
+tableso/oost82.html,  windows-1252
+tableso/oost83.html,  windows-1252
+tableso/oost84.html,  windows-1252
+tableso/oost85.html,  windows-1252
+tableso/oost86.html,  windows-1252
+tableso/oost87.html,  windows-1252
+tableso/oost88.html,  windows-1252
+tableso/oost89.html,  windows-1252
+tableso/oost90.html,  windows-1252
+tableso/oost91.html,  windows-1252
+tableso/oost92.html,  windows-1252
+tableso/oost93.html,  windows-1252
+tableso/oost94.html,  windows-1252
+tableso/oost95.html,  windows-1252
+tableso/oost96.html,  windows-1252
+tableso/oost97.html,  windows-1252
+tableso/oost98.html,  windows-1252
+tableso/oost99.html,  windows-1252
+tableso/oost00.html,  windows-1252
+tableso/oost01.html,  windows-1252
+tableso/oost02.html,  windows-1252
+tableso/oost03.html,  windows-1252
+tableso/oost04.html,  windows-1252
+tableso/oost05.html,  windows-1252
+tableso/oost06.html,  windows-1252
+tableso/oost07.html,  windows-1252
+tableso/oost08.html,  windows-1252
+tableso/oost09.html,  windows-1252
+tableso/oost2010.html,  windows-1252
+tableso/oost2011.html,  windows-1252
+tableso/oost2012.html,  windows-1252
+tableso/oost2013.html,  windows-1252
+tableso/oost2014.html,  windows-1252
+tableso/oost2015.html,  windows-1252
+tableso/oost2016.html,  windows-1252
+tableso/oost2017.html,  windows-1252
+tableso/oost2018.html,  windows-1252
+tableso/oost2019.html,  windows-1252
+tableso/oost2020.html,  windows-1252
+tableso/oost2021.html,  windows-1252
+tableso/oost2022.html,  windows-1252
+tableso/oost2023.html,  windows-1252
+tableso/oost2024.html,  windows-1252
+tableso/oost2025.html,  windows-1252
+tableso/oost2026.html,  windows-1252
