@@ -31,8 +31,16 @@ def html_to_txt( html, url: )
                       \s*
                    /xim, 
                    '' )
+                  
+  ## special case i)   no <body> - cut-off head if present
+  ## cut off everything before <head/>
+  ##   used in braz93.html, braz98.html
+  html = html.sub( /.+?
+                     <\/HEAD>
+                       \s*
+                   /xim, '' )    
 
-  ## special case
+  ## special case ii) no <body>, no </head> 
   ## cut off everything before <head/>
   ##   used in braz93.html, braz98.html
   html = html.sub( /.+?

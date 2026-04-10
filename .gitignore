@@ -4,12 +4,14 @@ cache/
 tmp/
 tmp2/
 tmp3/
+tmp-curdom/
 o/
 
 #########
 ### ignore logs and errors
 logs.txt
 logs.2.txt
+logs.old.txt
 logs.html
 error.txt
 error.html

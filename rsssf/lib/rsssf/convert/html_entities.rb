@@ -31,6 +31,9 @@ class PageConverter
 é   &eacute;
 ê   &ecirc;
 ë   &euml;
+
+ð   &eth;
+
 Ì   &Igrave;
 Í   &Iacute;
 Î   &Icirc;
@@ -75,7 +78,7 @@ class PageConverter
 
 
 
-  def self.convert_html_entities( html )
+  def self.convert_html_entities( html, url: nil )
     ## check for html entities
     html = html.gsub( "&auml;", 'ä' )
     html = html.gsub( "&ouml;", 'ö' )
@@ -115,18 +118,23 @@ class PageConverter
 
         
     html = html.gsub( /&[^; ]{1,10};/) do |match|
-
+           ##   ignore weird edge case of &A;
+           ##    e.g. [M&A; moved from pool B] - where M&A is name of club
+               if match == '&A;'
+               else
                   msg = "found unencoded html entity #{match}"
+                  msg += " in >#{url}<"   if url
+
                   puts "*** WARN - #{msg}"
                   log( msg )  ## log too (see log.txt)
-
-                  match   ## pass through as is (1:1)
-         
+               end
+               
+               match   ## pass through as is (1:1)
     end
     
     html
   end
-  def convert_html_entities( html ) self.class.convert_html_entities( html ); end
+  def convert_html_entities( html, url: nil ) self.class.convert_html_entities( html, url: url ); end
  
 
 

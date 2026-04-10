@@ -12,6 +12,20 @@ def self.errata_html( html )
    ###   kind of PRE-processing, see errata_txt for POST-processing
    ###  check - rename to errata_pre/post - why? why not?
 
+  
+   ## quick fix   </a  => </a>   
+   ##  <a href="#play6">Gold League (Calle 6)</a
+   ##  <a href="#zpl">PBZ Premier League 2025/26</a
+   ##  <a href="#lig1">Championnat National Ligue 1</a
+
+   html = html.gsub( /<\/A
+                          (?![ ]*>)    ## negative lookahead
+                      /ix, '</A>' )
+
+   ## quick fix  </br>  => <br>
+   html = html.gsub( /<\/BR>/i, '<BR>' )
+
+
 
   ## quick fix - change typo <H1></H2>
   ##  tables/58full.html

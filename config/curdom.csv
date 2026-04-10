@@ -1,0 +1,285 @@
+##   Current Domestic Results
+## see https://www.rsssf.org/curdom.html
+
+##  note - for the encoding windows-1252 is assumed
+
+page, country, encoding
+
+
+#######
+## League Results Africa
+
+tablesa/alg2026.html, Algeria
+tablesa/ango2026.html, Angola
+tablesb/benin2026.html, Benin
+tablesb/bots2026.html, Botswana
+tablesb/burkf2026.html, Burkina Faso
+tablesb/buru2026.html, Burundi
+tablesk/kam2026.html, Cameroon
+tablesk/kaapv2026.html, Cape Verde
+tablesc/cafr2024.html, Central African Republic (national)
+tablesc/cafr2025.html, Central African Republic (Bangui)
+tablest/tsja2025.html, Chad
+tablesc/como2025.html, Comoros
+tablesk/kong2025.html, Congo-Brazzaville
+tablesz/zaire2026.html, Congo-Kinshasa
+tablesd/dji2025.html, Djibouti
+tablese/egy2025.html, Egypt
+tablese/eqguinea2025.html, Equatorial Guinea
+tablese/erit2025.html, Eritrea
+tabless/swaz2026.html, Eswatini
+tablese/ethi2026.html, Ethiopia
+tablesg/gab2026.html, Gabon
+tablesg/gamb2026.html, Gambia
+tablesg/gha2026.html, Ghana
+tablesg/guinea2026.html, Guinea
+tablesg/gbis2026.html, Guinea Bissau
+tablesi/ivo2026.html, Ivory Coast
+tablesk/kenya2026.html, Kenya
+tablesl/leso2026.html, Lesotho
+tablesl/liber2026.html, Liberia
+tablesl/lib2025.html, Libya
+tablesm/madag2026.html, Madagascar
+tablesm/malaw2025.html, Malawi
+tablesm/mali2026.html, Mali
+tablesm/maur2026.html, Mauritania
+tablesm/mauri2026.html, Mauritius
+tablesm/mayo2025.html, Mayotte
+tablesm/maro2025.html, Morocco
+tablesm/moz2025.html, Mozambique
+tablesn/nami2026.html, Namibia
+tablesn/niger2026.html, Niger
+tablesn/nig2026.html, Nigeria
+tablesr/reunion2025.html, Reunion
+tablesr/rodri2025.html, Rodrigues
+tablesr/rwan2026.html, Rwanda
+tabless/sthelena2025.html, Saint Helena
+tabless/saotome2026.html, São Tomé e Príncipe
+tabless/sene2026.html, Senegal
+tabless/sey2026.html, Seychelles
+tabless/sier2026.html, Sierra Leone
+tabless/soma2026.html, Somalia
+tabless/somalil2024.html, Somaliland
+tablesz/zaf2025.html, South Africa
+tablesz/zsoed2026.html, South Sudan
+tabless/soed2026.html, Sudan
+tablest/tanz2026.html, Tanzania
+tablest/togo2026.html, Togo
+tablest/tun2025.html, Tunisia
+tableso/oeg2026.html, Uganda
+tablesz/zamb2026.html, Zambia
+tablesz/zanz2026.html, Zanzibar
+tablesz/zimb2026.html, Zimbabwe
+
+
+###
+## League Results America (Central, North, and South)
+
+
+tablesa/alaska2025.html, Alaska
+tablesa/anguilla2025.html, Anguilla
+tablesa/antig2026.html, Antigua and Barbuda
+tablesa/arg2026.html, Argentina
+tablesa/aruba2026.html, Aruba
+tablesb/bahama2026.html, Bahamas
+tablesb/barb2026.html, Barbados
+tablesb/belize2026.html, Belize
+tablesb/berm2026.html, Bermuda
+tablesb/bol2025.html, Bolivia
+tablesb/bonaire2026.html, Bonaire
+tablesb/braz2025.html, Brazil
+tablesb/brmaagd2026.html, British Virgin Islands
+tablesc/can2025.html, Canada
+tablesc/cayman2026.html, Cayman Islands
+tablesc/chile2025.html, Chile
+tablesc/col2025.html, Colombia
+tablesc/cos2026.html, Costa Rica
+tablesc/cuba2025.html, Cuba
+tablesc/curacao2026.html, Curaçao 
+tablesd/domi2025.html, Dominica
+tablesd/domrep2025.html, Dominican Republic
+tablese/ecua2025.html, Ecuador
+tablese/elsal2026.html, El Salvador
+tablesf/falk2025.html, Falkland Islands
+tablesf/frguy2025.html, French Guyana
+tablesg/groenl2025.html, Greenland
+tablesg/grenada2025.html, Grenada
+tablesf/frant2025.html, Guadeloupe
+tablesg/guat2026.html, Guatemala
+tablesg/guyana2025.html, Guyana
+tablesh/haiti2026.html, Haiti
+tablesh/hond2026.html, Honduras
+tablesj/jam2026.html, Jamaica
+tablesf/frant2025.html, Martinique
+tablesm/mex2026.html, Mexico
+tablesn/nica2026.html, Nicaragua
+tablesp/panama2025.html, Panama
+tablesp/para2026.html, Paraguay
+tablesp/peru2026.html, Peru
+tablesp/p-rico2026a.html, Puerto Rico
+tablesf/frant2025.html, Saint-Barthélemy
+tabless/stkitts2026.html, Saint Kitts and Nevis
+tabless/stlucia2025.html, Saint Lucia
+tablesf/frant2025.html, Saint-Martin
+tabless/stpierre2025.html, Saint-Pierre et Miquelon
+tabless/stvin2025.html, Saint Vincent and the Grenadines
+tabless/stmaarten2025.html, Sint Maarten
+tabless/suri2026.html, Surinam
+tablest/trin2026.html, Trinidad and Tobago
+tablest/turkscaicos2026.html, Turks and Caicos Islands
+tablesu/usa2025.html, United States
+tablesu/uru2026.html, Uruguay
+tablesu/usamaagd2025.html, US Virgin Islands
+tablesv/venez2025.html, Venezuela
+
+
+####
+#  League Results Asia and Oceania
+
+tablesa/afgh2025.html, Afghanistan
+tablesa/amsamoa2024.html, American Samoa
+tablesa/aus2025.html, Australia
+tablesb/bah2025.html, Bahrain
+tablesb/bang2026.html, Bangladesh
+tablesb/bhutan2025.html, Bhutan
+tablesp/png-bgv2025.html, Bougainville
+tablesb/brunei2026.html, Brunei
+tablesc/cambod2026.html, Cambodia
+tablesc/china2025.html, China
+tablesc/cook2025.html, Cook Islands
+tableso/oosttim2025.html, East Timor
+tablesf/fiji2026.html, Fiji (districts)
+tablesf/fiji2025.html, Fiji (clubs)
+tablesg/guam2025.html, Guam
+tablesh/hawaii2022.html, Hawaii (Oahu)
+tablesh/hk2026.html, Hongkong
+tablest/tahiti2025.html, Huahine
+tablesi/india2025.html, India
+tablesi/indo2026.html, Indonesia
+tablesi/iran2025.html, Iran
+tablesi/iraq2025.html, Iraq
+tablesj/jpn2025.html, Japan, utf-16le  
+tablesj/jord2025.html, Jordan
+tablesk/kiri2025.html, Kiribati
+tablesi/iraq-kurd2025.html, Kurdistan
+tablesk/kuw2025.html, Kuwait
+tablesk/kyrg2026.html, Kyrgyzstan, utf-16le
+tablesl/laos2026.html, Laos
+tablesl/leb2025.html, Lebanon
+tablesm/macao2026.html, Macao
+tablesm/malay2026.html, Malaysia
+tablesm/maled2026.html, Maldives
+tablest/tahiti2025.html, Marquesas Islands
+tablesm/micro2022.html, Micronesia
+tablesm/mong2026.html, Mongolia
+tablest/tahiti2026.html, Mooréa
+tablesm/myan2026.html, Myanmar
+tablesn/nepal2023.html, Nepal (A Division)
+tablesn/nepal2025.html, Nepal (Super League)
+tablesn/newcal2026.html, New Caledonia
+tablesn/nz2025.html, New Zealand
+tablesn/nmi2026.html, Northern Marianas
+tableso/oman2025.html, Oman
+tablesp/paki2022.html, Pakistan
+tablesp/pales2024.html, Palestine (Gaza Strip)
+tablesp/pales2024.html, Palestine (West Bank)
+tablesp/png2025.html, Papua New Guinea
+tablesp/phil2026.html, Philippines
+tablesq/qat2025.html, Qatar
+tablest/tahiti2025.html, Raiatea
+tabless/samoa2025a.html, Samoa
+tabless/sau2025.html, Saudi Arabia
+tabless/sing2026.html, Singapore
+tabless/solom2025.html, Solomon Islands
+tabless/skor2025.html, South Korea
+tabless/srilanka2022.html, Sri Lanka
+tabless/syr2025.html, Syria
+tablest/tahiti2026.html, Tahiti
+tablest/taiwan2026.html, Taiwan
+tablest/taji2026.html, Tajikistan, utf-16le
+tablest/thai2026.html, Thailand
+tablest/tonga2023.html, Tonga
+tablest/turkm2025.html, Turkmenistan, utf-16le
+tablesu/uae2025.html, United Arab Emirates
+tableso/oez2026.html, Uzbekistan, utf-16le
+tablesv/vanuatu2025.html, Vanuatu (VFFCL)
+tablesv/vanuatu2026.html, Vanuatu (PVFL)
+tablesv/viet2026.html, Vietnam
+tablesy/yemen2024.html, Yemen</A>
+
+####
+## League Results Europe
+
+tablesa/abchaz2026.html, Abkhazia,   utf-8
+tablesa/alba2025.html, Albania
+tablesa/ando2025.html, Andorra
+tablesa/arme2026.html, Armenia,   utf-16le
+tableso/oost2026.html, Austria
+tablesa/azer2026.html, Azerbaijan,   utf-16le
+tablesa/azores2024.html, Azores
+tablesw/witr2026.html, Belarus,  utf-8
+tablesb/belg2025.html, Belgium
+tablesb/bih2025.html, Bosnia-Hercegovina
+tablesb/bulg2025.html, Bulgaria
+tablesc/chisl2025.html, Channel Islands (Guernsey)
+tablesc/chisl2025.html, Channel Islands (Jersey)
+tablesz/zooekr2026.html, Crimea,   utf-8
+tablesk/kroa2025.html, Croatia,   utf-16le
+tablesc/cyp2025.html, Cyprus
+tablest/tsje2025.html, Czechia
+tablesd/den2025.html, Denmark
+tablese/eng2025.html, England
+tablese/est2025.html, Estonia
+tablesf/far2026.html, Faroe Islands
+tablesf/fin2025.html, Finland
+tablesf/fran2025.html, France
+tablesg/geor2026.html, Georgia,  utf-16le
+tablesd/duit2025.html, Germany
+tablesg/gib2025.html, Gibraltar
+tablesg/gozo2025.html, Gozo
+tablesg/grk2025.html, Greece
+tablesh/hong2025.html, Hungary
+tablesi/ijs2025.html, Iceland
+tablesi/ier2025.html, Ireland
+tablesm/manx2025.html, Isle of Man
+tablese/engiow2025.html, Isle of Wight
+tablesi/isra2025.html, Israel
+tablesi/ital2025.html, Italy
+tablesk/kaz2026.html, Kazakhstan,  utf-16le
+tablesk/kosovo2025.html, Kosovo
+tablesl/let2026.html, Latvia,  utf-16le
+tablesl/lito2026.html, Lithuania,  utf-16le
+tablesl/lux2025.html, Luxembourg
+tablesm/madeira2024.html, Madeira
+tablesm/malt2025.html, Malta
+tablesm/mold2026.html, Moldova,  utf-8
+tablesm/monaco2023.html, Monaco
+tablesm/monteg2025.html, Montenegro
+tablesn/ned2026.html, Netherlands
+tablesn/nmkd2025.html, North Macedonia
+tablesn/ncyp2025.html, Northern Cyprus
+tablesn/nil2025.html, Northern Ireland
+tablesn/noo2025.html, Norway
+tableso/orkney2025.html, Orkney Islands
+tablesp/pol2025.html, Poland
+tablesp/port2025.html, Portugal
+tablesr/roem2025.html, Romania
+tablesr/rus2026.html, Russia,   utf-16le
+tabless/sanm2025.html, San Marino
+tabless/scilly2025.html, Scilly Islands
+tabless/scot2025.html, Scotland
+tabless/serv2025.html, Serbia
+tabless/shetl2025.html, Shetland Islands
+tabless/slow2025.html, Slovakia
+tabless/slov2025.html, Slovenia
+tablesz/zooekr2025.html, Southeastern Ukraine,  utf-8
+tabless/span2025.html, Spain
+tablesz/zwed2026.html, Sweden
+tablesz/zwit2026.html, Switzerland
+tablest/tnistru2025.html, Transnistria, utf-16le
+tablest/tur2025.html, Turkey
+tableso/oekr2026.html, Ukraine, utf-16le
+tablesw/wal2025.html, Wales
+
+
+

@@ -22,7 +22,7 @@ class PageConverter
     html = html.gsub( "\r\n", "\n" )
 
     
-    html = convert_html_entities( html )
+    html = convert_html_entities( html, url: url )
 
  ###################################
  ### smart quotes quick fixes   

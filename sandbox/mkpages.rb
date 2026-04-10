@@ -7,6 +7,7 @@ require_relative 'helper'
 
 
 pages = []
+=begin
 pages += read_csv( "./config/eng.csv" )
 pages += read_csv( "./config/es.csv" )
 pages += read_csv( "./config/de.csv" )
@@ -14,7 +15,9 @@ pages += read_csv( "./config/at.csv" )
 pages += read_csv( "./config/br.csv" )
 pages += read_csv( "./config/worldcup.csv" )
 pages += read_csv( "./config/worldcup_quali.csv" )
+=end
 
+pages += read_csv( "./config/curdom.csv" )
 pp pages
 
 
@@ -88,7 +91,7 @@ pages.each do |config|
 end
 
 
-write_csv( "./config/pages.csv", rows, headers: ['page', 'title', 'updated', 'pre_count'] )
+write_csv( "./config/curdom-pages.csv", rows, headers: ['page', 'title', 'updated', 'pre_count'] )
 
 
 

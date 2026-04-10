@@ -22,7 +22,8 @@ opts = {
 
 code = args.shift  ## get first argument
 
-outdir = "./tmp3"
+outdir = "./tmp-curdom"
+## outdir = "../tables"
 
 ## outdir = "../brazil/tables"
 ## outdir = "../england/tables"
@@ -36,37 +37,67 @@ pages = read_csv( "./config/#{code}.csv" )
 pp pages
 
 
+TITLE_RE = %r{<TITLE>(?<text>.*?)</TITLE>}ixm
+
+
 ## pass 1 - download
-pages.each do |config|
-  encoding = config['encoding']
+pages.each_with_index do |config,i|
+  encoding = config['encoding'] || 'windows-1252'
   page     = config['page']
   url      = "https://rsssf.org/#{page}"
 
   ## check if not in cache  
   ##   note - use force == true  to always (force) download
-  if  Webcache.cached?( url ) && opts[:force] == false
+ 
+=begin
+  if %w[
+tablesj/jpn2025.html
+tablesk/kyrg2026.html
+tablest/taji2026.html
+tablest/turkm2025.html
+].include?( page )
+  ## if encoding != 'windows-1252'  ## quick fix - always (force) download
+      puts "==> [#{i+1}/#{pages.size}] download #{config.pretty_inspect}..."
+      Rsssf.download_page( url, encoding: encoding )
+=end
+
+
+  if Webcache.cached?( url ) && opts[:force] == false 
       puts "   CACHE HIT - #{url}"
   else
-      Rsssf.download_page( url, encoding: encoding )
+      puts "==> [#{i+1}/#{pages.size}] download #{config.pretty_inspect}..."
+      html = Rsssf.download_page( url, encoding: encoding )
+
+      if encoding == 'windows-1252'
+          ## try a quick check if proper encoding
+          ## search for title in page
+           if  m=TITLE_RE.match( html )
+              puts "  page title: #{m[:text].strip}"
+           else
+             puts "error - no title found in html - encoding error?"
+             exit 1
+           end
+      end
   end
 end
-          
+  
+
 ## pass 2 - convert
 pages.each_with_index do |config,i|
-  encoding = config['encoding']
   page     = config['page']
   url      = "https://rsssf.org/#{page}"
 
   html     = Webcache.read( url )
   
   basename = File.basename( page, File.extname( page ))
+  dirname  = File.dirname( page )
 
   puts
-  puts "==> [#{i+1}/#{pages.size}] converting #{basename}..."
+  puts "==> [#{i+1}/#{pages.size}] converting #{config.pretty_inspect}......"
 
   txt = Rsssf::PageConverter.convert( html, url: url )
 
-  write_text( "#{outdir}/#{basename}.txt", txt )
+  write_text( "#{outdir}/#{dirname}/#{basename}.txt", txt )
 end
 
 

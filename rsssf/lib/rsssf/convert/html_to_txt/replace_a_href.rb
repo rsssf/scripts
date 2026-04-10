@@ -10,10 +10,16 @@ class PageConverter
   #
   #  and Daniel Dalence (<A
   #   href="mailto:danielballack@terra.com.br">danielballack@terra.com.br</A>)
+  ##
+  ##
+  ##  empty
+  ##  <a>Primer Descenso – First Relegation</a>
 
-
-  A_HREF_RE = %r{<A \s+ HREF [ ]* = 
-                    (?<href>[^>]+?)
+  A_HREF_RE = %r{<A 
+                    (?: 
+                       \s+ HREF [ ]* = 
+                          (?<href>[^>]+?)
+                    )?
                   >
                     (?<title>.+?)
                   <\/A>
@@ -26,15 +32,26 @@ def replace_a_href( html )
   #  note: <a \newline href is used for authors email - thus incl. support for newline as space
   html.gsub( A_HREF_RE ) do |match|   ## note: use .+? non-greedy match
     m = Regexp.last_match
-    href  = m[:href].gsub( /["']/, '' ).strip   ## remove ("" or '')
-    title = m[:title].strip   ## note: "save" caputure first; gets replaced by gsub (next regex call)
+    captures = m.named_captures
+    href  = if m['href']
+               m['href'].gsub( /["']/, '' ).strip   ## remove ("" or '')
+            else
+               nil
+            end
+    title = m['title'].strip   ## note: "save" caputure first; gets replaced by gsub (next regex call)
 
 
+    if href.nil?
+       ## report error - <a>hello</a> is useless
+       puts " replace anchor w/ missing (!!) href (a) >#{title}<"
+      "‹#{squish(title)}›"
+  
     ## e.g.
     ##  ‹Larsen23@gmx.de, see page mailto:Larsen23@gmx.de›
     ##  ‹danielballack@terra.com.br, see page mailto:danielballack@terra.com.br›
     ##  ‹zja70@aol.com, see page mailto:zja70@aol.com›)
-    if href.start_with?( 'mailto:')
+  
+    elsif href.start_with?( 'mailto:')
       puts " blank mailto  -  anchor (a) href >#{href}, >#{title}<"
       '‹mailto›'   ## delete/remove email
     else
