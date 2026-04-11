@@ -20,10 +20,19 @@ Halfway Table:
  3.FC Barcelona                  19  12  2  5  51-22  38
  4.Athletic de Bilbao            19  10  6  3  29-17  36
 
+-or-
+
+Fall Table
+
+ 1. 1. FC Köln                   15  8  4  3  41- 27  20
+ 2. Werder Bremen                15  8  4  3  28- 17  20
+ 3. TSV 1860 München             15  6  5  4  27- 19  17
+ 4. 1. FC Nürnberg               15  7  3  5  27- 22  17
+
 =end
 
 
-TABLE_RE = %r{^     [ ]* (?:Final|Halfway) [ ] table  
+TABLE_RE = %r{^     [ ]* (?:Final|Fall|Halfway) [ ] table  
                            :?           ## note - optional colon
                          [ ]*
                           \n{1,2}       ## note - optional leading blank line!!

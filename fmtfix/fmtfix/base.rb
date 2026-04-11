@@ -1,134 +1,5 @@
 
 
-
-
-
-ROUND_PAT = %q{
-               Round [ ] \d{1,2}     ## e.g. round 1, round 2, etc.
-             | (?: First | Second | Third | 1st | 2nd | 3rd) [ ] round 
-
-             | (?: First | Second | 1st | 2nd) [ ] phase 
-                   
-             | 1/16 [ ] Finals
-
-             | 1/8 [ ] Finals  
-             | Eightfinals 
-
-             | Quarter [ -]? finals 
-             | Semi [ -]? finals? 
-             
-             | Third [ ] place [ ] match 
-             | Match [ ] for [ ] third [ ] place 
-
-             | Final 
-             | Final [ ] group | Final [ ] pool 
-             | Deciding [ ] match
-
-             ## add stages
-             | Regular [ ] stage
-             | Playoff [ ] stage 
-             | Championship [ ] playoff
-             | Relegation [ ] playoff
-             | Europa [ ] league [ ] playoff 
-             | Conference [ ] league [ ] playoff
-             | Promotion/relegation [ ] playoff
-             
-             ## standalone legs
-             | First [ ] legs? 
-             | Second [ ] legs?
-}        
-
-
-
-
-DATE_PAT = %q{
-                           (  Jan
-                            | Feb
-                            | March | Mar
-                            | April | Apr 
-                            | May
-                            | June | Jun
-                            | July | Jul
-                            | Aug
-                            | Sept | Sep
-                            | Oct
-                            | Nov
-                            | Dec )
-                             [ /]      
-                            \d{1,2}                           
-}
-
-
-## let's you check optional ref e.g. ‹§fin›
-OPT_REF = %q{
-            (?: [ ]*    
-              ‹ (?<ref> §[^›]+?) ›
-            )?
-         }
-
-
-
-HEADER_ROUND_RE = %r{\A
-        [ ]*
-         (?<round> #{ROUND_PAT})
-            #{OPT_REF}
-         [ ]*
-\z}ix
-
-HEADER_DATE_RE = %r{\A
-      [ ]*
-      \[ (?<date> #{DATE_PAT}) \]
-      [ ]*
-\z}ix
-
-
-## Round 24 [Mar 21]
-HEADER_ROUND_N_DATE_RE = %r{\A
-        [ ]*
-         (?<round> #{ROUND_PAT})
-         [ ]+
-        \[ (?<date> #{DATE_PAT}) \]
-        [ ]*
-\z}ix
-
-
-## Final [May 1, Klagenfurt]
-HEADER_ROUND_N_DATE_N_CITY_RE = %r{\A
-        [ ]*
-         (?<round> #{ROUND_PAT})
-         [ ]+
-        \[ (?<date> #{DATE_PAT})
-             , [ ]*
-           (?<city> .+?)    
-        \]
-        [ ]*
-\z}ix
-
-
-
-
-##
-## todo/fix
-##  warn about date ranges  - not supported for now (maybe later)
-##
-##  e.g. ▪ Round 16 ▪  Feb 26, 27
-##  Round 20 [Mar 24-26]
-##    [Mar 4, 5]
-##    [Mar 11, 12]
-##  [around Mar 29]
-##  [around Apr 19]
-##  [Apr 1, 2]
-
-##  date with cancelled status
-## [Mar 31 - cancelled]
-## [Apr 1 - cancelled]
-## Semifinals [Apr 22 - cancelled]
-## Final [May 21 - cancelled]
-##  [tba - cancelled]
-
-
-
-
 def autofix( txt )
 
 ###
@@ -185,14 +56,34 @@ def autofix( txt )
         ## check if line incl. newline? - yes
 
       newtxt <<  if m = HEADER_ROUND_RE.match(line.rstrip)
-                   ## use indent of six spaces
                    "▪ #{m[:round]} ▪\n" 
                  elsif m = HEADER_DATE_RE.match(line.rstrip)
+                   ## e.g. [Nov 20]
+                   ## e.g. [April 1]
                    "_ #{m[:date]} _\n" 
+                 elsif m = HEADER_DATE_II_RE.match(line.rstrip)
+                    ## e.g. Nov 20 1999
+                    ##      Apr 1 2000
+                   "_ #{m[:date]} _\n" 
+                 elsif m = HEADER_DATE_III_RE.match(line.rstrip)
+                    ## e.g. [Wed 6 Feb]
+                    ##      [Sat 16 Feb]
+                   "_ #{m[:date]} _\n" 
+                 elsif m = HEADER_DATE_ALT_RE.match(line.rstrip)
+                    ## e.g. [07-09]  
+                    ##      [30-05, Thaur]
+                    buf = String.new
+                    buf += "_ #{m[:day]}/#{m[:month]} _"
+                    buf += ", #{m[:city]}"    if m[:city]
+                    buf += "\n"
+                    buf
                  elsif m = HEADER_ROUND_N_DATE_RE.match(line.strip)
                    "▪ #{m[:round]} ▪  #{m[:date]}\n"                   
                  elsif m = HEADER_ROUND_N_DATE_N_CITY_RE.match(line.strip)
-                   "▪ #{m[:round]} ▪  #{m[:date]}, #{m[:city]}\n"                   
+                   "▪ #{m[:round]} ▪  #{m[:date]}, #{m[:city]}\n"  
+                 elsif m = HEADER_ROUND_N_CITY_N_DATE_RE.match(line.strip)
+                    ## note - reverse (rotate) date & city
+                   "▪ #{m[:round]} ▪  #{m[:date]}, #{m[:city]}\n"  
                  else
                    line 
                  end
@@ -200,20 +91,10 @@ def autofix( txt )
    
    txt = newtxt
 
-
-
-  ###  [aet]  => (aet)
-  txt = txt.gsub( '[aet]', '(aet)' )
-
-    ## fix typo
-    ##   [aet. 3-5 pen]  => [aet,]
-    txt = txt.gsub( '[aet. ', '[aet, ')
   
-   ## [aet, 2-3 pen] => (aet, 2-3 pen)
-   ##  [aet, 9-10 pen]
-   txt = txt.gsub( /\[(aet, \d{1,2}-\d{1,2} pen)\]/i, '(\1)') 
+   txt = handle_score( txt )
 
-
+ 
 
 
    ##   [15' Barisic, 80' Gilewicz; 10' (og) Barisic]
