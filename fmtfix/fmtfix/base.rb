@@ -1,44 +1,4 @@
 
-####
-#  to run use:
-#    $ ruby sandbox/fmtfix.rb        
-#
-#  e.g.
-#   ruby sandbox\fixfmt.rb oost2026.txt oost00.txt oost2020.txt oost2021.txt oost2022.txt
-#   ruby sandbox\fixfmt.rb span2011.txt span2025.txt
-
-## - try to autofix (convert) the formatting
-##     to match the football.txt format
-
-
-require 'cocos'
-
-
-##
-## note - use File.file? instead of File.exist? 
-##            (checks if file exists AND file is a file NOT a directory)
-
-
-def find_file( name, path: )
-    return name    if File.file?( name )
-
-    path.each do |dir|
-        filepath = File.join( dir, name )
-        return filepath   if File.file?(  filepath )
-    end
-
-    puts "!! ERROR - file <#{name}> not found; looking in path: #{path.inspect}"
-    exit 1
-end
-
-
-
-
-PATH = [
-   '../clubs/austria/tables',
-   '../clubs/spain/tables',
-]
-
 
 
 
@@ -48,7 +8,9 @@ ROUND_PAT = %q{
              | (?: First | Second | Third | 1st | 2nd | 3rd) [ ] round 
 
              | (?: First | Second | 1st | 2nd) [ ] phase 
-                         
+                   
+             | 1/16 [ ] Finals
+
              | 1/8 [ ] Finals  
              | Eightfinals 
 
@@ -72,9 +34,10 @@ ROUND_PAT = %q{
              | Promotion/relegation [ ] playoff
              
              ## standalone legs
-             | First [ ] leg 
-             | Second [ ] leg
+             | First [ ] legs? 
+             | Second [ ] legs?
 }        
+
 
 
 
@@ -168,18 +131,49 @@ HEADER_ROUND_N_DATE_N_CITY_RE = %r{\A
 
 def autofix( txt )
 
+###
+##  step 1
+##   split by horizontal rules (hrs)
+##       and remove navigations sections
+##             starting with links e.g.   
+## ‹Bundesliga, see §bund›
+
+   sects = txt.split( /^=-=-=-=-=-=-=-=-=-=-=-=-=-=-=$/ )
+
+   
+   sects = sects.select do |sect|
+      nav = %r{\A
+               [ \n]*    ## trailing spaces or blank lines 
+                ‹.+?›    ##  link
+             }ix.match(sect)
+        if nav
+           puts "  removing nav(igation section:"
+           puts sect
+        end     
+      nav ? false : true
+    end
+
+   ## sects.each_with_index do |sect,i|
+   ##  puts "==> #{i+1}/#{sects.size}"
+   ##  pp sect
+   ## end
+   ##  puts "  #{sects.size} sect(s)"
+ 
+   
+   ## note - replace hr with blank line
+   txt = sects.join( "\n\n" )
+
+
   ###
   ## remove pre comments
   txt = txt.gsub( "<!-- start pre -->\n", '' )
   txt = txt.gsub( "<!-- end pre -->\n", '' )
 
- ###
- ##  remove trailing about document meta backmatter
- ##  == About this document  ‹§about›
- ## 
-    txt = txt.sub( /^[ ]*== About this document.*/im, '' )
+ 
+    txt = handle_about( txt )  ## e.g. about this document
 
-
+    txt = handle_tables( txt )     ## e.g. final/halfway table (aka standings)
+    txt = handle_topscorers( txt )
 
 
  
@@ -210,10 +204,16 @@ def autofix( txt )
 
   ###  [aet]  => (aet)
   txt = txt.gsub( '[aet]', '(aet)' )
+
+    ## fix typo
+    ##   [aet. 3-5 pen]  => [aet,]
+    txt = txt.gsub( '[aet. ', '[aet, ')
   
    ## [aet, 2-3 pen] => (aet, 2-3 pen)
    ##  [aet, 9-10 pen]
    txt = txt.gsub( /\[(aet, \d{1,2}-\d{1,2} pen)\]/i, '(\1)') 
+
+
 
 
    ##   [15' Barisic, 80' Gilewicz; 10' (og) Barisic]
@@ -294,7 +294,11 @@ def autofix( txt )
 ##  ["Edmilson" Gomes de Moraes 40, Marco Perez 68,
 ##   Ander Herrera 82; Fernando Fernandez 1, 27,
 ##   Juan Miguel Jimenez "Juanmi" 6, 28, Quincy Owusu-abeyie 35]
-
+##  or
+##  [Jose Manuel Casado 16,Emiliano Armenteros 20,
+##   Jorge Andujar Moreno "Coke" 60; Jose Javier Barkero 14pen,
+##   Jose Antonio Culebras 90+].
+##    note - remove optional trailing dot!!
 txt = txt.gsub( %r{^
                      ([ ]*)
                        \[
@@ -311,6 +315,7 @@ txt = txt.gsub( %r{^
                           .*?     
                         )
                       \]
+                      \.?  ## optional trailing dot
                      [ ]*
                     $}ix, 
                     '\1(\2)' )
@@ -332,37 +337,3 @@ end
 
 
 
-def fmtfix( args, 
-             path: PATH, 
-             outdir: './tmp' )
- 
-   args.each_with_index do |name,i|
-      puts "==> #{i+1}/#{args.size} #{name}..."
-
-      filename = find_file( name, path: path )
-
-      txt = read_text( filename )
-
-      dirname  = File.dirname( filename )
-      basename = File.basename( filename, File.extname( filename ) )
-      extname  = File.extname( filename )
-
-      ## change outfile  - add .autofix
-      outfile = File.join(  outdir, "#{basename}#{extname}" )
-      
-
-      newtxt = autofix( txt )
-
-      write_text( outfile, newtxt )
-   end
-end
-
-
-if __FILE__ == $0
-
-  args = ARGV
-  outdir = './tmp-fixfmt'
-
-  fmtfix( args, outdir: outdir )
-  puts "bye" 
-end
