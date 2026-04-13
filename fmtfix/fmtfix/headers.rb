@@ -31,32 +31,33 @@ HEADER_ROUND_RE = %r{\A
 ##   [Aug 7-9]
 ##   [Aug 7, 8]
 
+
+
+## helper for inline regexes (with union) and escaped
+def date_( *re ) 
+      raise ArgumentError, "more than one date regex expected, got #{re}"  if re.size < 1      
+      
+      ## (auto-)wrap in non-capature group - why? why not?
+      "(?: #{Regexp.union( *re ).source})"
+end
+
+
 HEADER_DATE_RE = %r{\A
       [ ]*
-      \[ (?<date> 
-                  (?: #{DATE_PAT})
-                | (?: #{DATE_RANGE_PAT})
-                | (?: #{DATE_LIST_PAT})
-         ) 
+      \[  #{date_(DATE_I_RE, DATE_IB_RE,
+                  DATE_II_RE,
+                  DATE_LEGS_RE,
+                  DATE_RANGE_RE)}
       \]
       [ ]*
 \z}ix
 
-#### alternate daher header with year (brackets)
-## [Aug 18, 2004]
-## [Sep 4, 2004]
-## [Sep 8, 2004]
-## [Nov 19, 2003]
-## [Oct 15, 2008]
-## [Mar 26, 2004]
+## pp HEADER_DATE_RE
+## pp DATE_I_RE
+## pp DATE_I_RE.source  ## note - will NOT include re flags (e.g. +i/insensitive)
+## exit 1
 
-HEADER_DATE_IIA_RE = %r{\A
-      [ ]*
-      \[
-          (?<date> #{DATE_YYYY_PAT}) 
-      \]
-      [ ]*
-\z}ix
+
 
 ## alternate date header (no brackets incl. year)
 ##     Aug 7 1999
@@ -65,39 +66,22 @@ HEADER_DATE_IIA_RE = %r{\A
 ##    Nov 20 1999
 ##    Apr 1 2000
 
-HEADER_DATE_IIB_RE = %r{\A
+HEADER_DATE_II_RE = %r{\A
       [ ]*
-       (?<date> #{DATE_YYYY_PAT}) 
-      [ ]*
-\z}ix
-
-
-
-
-
-## alternate date header (weekkday day mon)
-## [Wed 6 Feb]
-## [Sat 16 Feb]
-## [Tue 26 Feb]
-HEADER_DATE_IIIA_RE = %r{\A
-      [ ]*
-       \[
-       (?<date> #{DATE_WDAY_DAY_MON_PAT}) 
-        \]
+         #{date_(DATE_I_RE, DATE_II_RE)} 
       [ ]*
 \z}ix
 
-## [Wed Feb 6]
-## [Sat Feb 16]
-## [Tue Feb 26]
-HEADER_DATE_IIIB_RE = %r{\A
+
+HEADER_DATE_N_CITY_RE = %r{\A
       [ ]*
-       \[
-       (?<date> #{DATE_WDAY_MON_DAY_PAT}) 
-        \]
+      \[  #{date_(DATE_I_RE, 
+                  DATE_II_RE)}
+           , [ ]* 
+           (?<city> .+?)
+      \]
       [ ]*
 \z}ix
-
 
 
 ###
@@ -109,7 +93,9 @@ HEADER_DATE_IIIB_RE = %r{\A
 
 HEADER_DATE_ALT_RE = %r{\A
       [ ]*
-      \[ (?<day> \d{1,2}) - (?<month> \d{1,2})
+      \[  (?<date>
+             (?<day> \d{1,2}) - (?<month> \d{1,2})
+          )
           (?:
               , [ ]* 
               (?<city> .+?)
@@ -138,10 +124,7 @@ HEADER_ROUND_N_DATE_RE = %r{\A
          (?<round> #{ROUND_PAT})
          [ ]+
         \[ 
-             (?<date>   (?: #{DATE_PAT})
-                      | (?: #{DATE_RANGE_PAT})
-                      | (?: #{DATE_LIST_PAT})
-              ) 
+           #{date_(DATE_I_RE, DATE_IB_RE, DATE_II_RE, DATE_LEGS_RE, DATE_RANGE_RE)}   
         \]
         [ ]*
 \z}ix
@@ -152,12 +135,13 @@ HEADER_ROUND_N_DATE_N_CITY_RE = %r{\A
         [ ]*
          (?<round> #{ROUND_PAT})
          [ ]+
-        \[ (?<date> #{DATE_PAT})
+        \[  #{date_(DATE_I_RE, DATE_II_RE)}
              , [ ]*
            (?<city> .+?)    
         \]
         [ ]*
 \z}ix
+
 
 ##
 ## reverse
@@ -170,12 +154,78 @@ HEADER_ROUND_N_CITY_N_DATE_RE = %r{\A
          [ ]+
         \[ (?<city> .+?)
              , [ ]*
-           (?<date> #{DATE_PAT})    
+            #{date_(DATE_I_RE, DATE_II_RE)}    
         \]
         [ ]*
 \z}ix
 
 
+
+
+#####
+## note - line-by-line processing / matching
+def _norm_date( m, format: nil )
+   ## quick fix for undefined group name reference
+   m = m.named_captures.transform_keys(&:to_sym)  if m.is_a?(MatchData)
+
+  if m[:date_legs]
+    _fmt_date_legs(_build_date_legs( m ), format: format ) 
+  elsif m[:date_range]
+    _fmt_date_range(_build_date_range( m ), format: format ) 
+  else   ## assume m[:date]
+    _fmt_date(_build_date( m ), format: format )
+  end
+end
+
+
+def handle_header( line )
+      ## note - returns    newline (matched header line reformatted) 
+      ##                    or nil (if no match!!)
+      ##
+       line = line.rstrip   ## expect chomp of newline "upstream" - why? why not?
+
+
+      if m = HEADER_ROUND_RE.match(line.rstrip)
+                   "▪ #{m[:round]} ▪\n" 
+      elsif m = HEADER_DATE_RE.match(line.rstrip)
+                   ## e.g. [Nov 20]
+                   ## e.g. [April 1]   
+                   date = _norm_date( m )
+                   "_ #{date} _\n" 
+      elsif m = HEADER_DATE_N_CITY_RE.match(line.rstrip)
+                   ## e.g. [Jun 3, Ferrol] 
+                   ## e.g. [Apr 2, Wembley]
+                   date = _norm_date( m )
+                   "_ #{date} _, #{m[:city]}\n" 
+      elsif m = HEADER_DATE_II_RE.match(line.rstrip)
+                    ##  note - no enclosing brackets []!!!
+                    ## e.g. Nov 20 1999  or Nov 20, 1999
+                    ##      Apr 1 2000   or Apr 1, 2000
+                     date = _norm_date( m )
+                   "_ #{date} _\n" 
+      elsif m = HEADER_DATE_ALT_RE.match(line.rstrip)
+                    ## e.g. [07-09]  
+                    ##      [30-05, Thaur]
+                    date = _norm_date( m, format: 'numeric' )
+                    buf = String.new
+                    buf += "_ #{date} _"
+                    buf += ", #{m[:city]}"    if m[:city]
+                    buf += "\n"
+                    buf
+      elsif m = HEADER_ROUND_N_DATE_RE.match(line.strip)
+                     date = _norm_date( m )
+                   "▪ #{m[:round]} ▪  #{date}\n"                   
+      elsif m = HEADER_ROUND_N_DATE_N_CITY_RE.match(line.strip)
+                     date = _norm_date( m )
+                   "▪ #{m[:round]} ▪  #{date}, #{m[:city]}\n"  
+      elsif m = HEADER_ROUND_N_CITY_N_DATE_RE.match(line.strip)
+                     date = _norm_date( m )
+                    ## note - reverse (rotate) date & city
+                   "▪ #{m[:round]} ▪  #{date}, #{m[:city]}\n"  
+       else
+         nil 
+       end
+end
 
 
 

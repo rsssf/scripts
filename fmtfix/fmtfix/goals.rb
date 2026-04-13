@@ -14,13 +14,17 @@
 
 
 ##
-##  note -  exclude \n newline too!!
+##  note -  exclude colon (:) too!!
+##    will note match props such as  [red card: ...]
+##                                   [ref: ...]
+##    and others
+
 
 GOALS_ = %q{
-                 [^\n\[\]]*? 
+                 [^:\[\]]*? 
                     \b 
                     \d{1,3}  '?  ## incl. minute 
-                 [^\n\[\]]*?
+                 [^\[\]]*?
            }              
 
 

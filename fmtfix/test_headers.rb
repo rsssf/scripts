@@ -1,0 +1,282 @@
+###
+##  to run tests use
+##   $ ruby  fmtfix/test_headers.rb
+
+
+## minitest setup
+require 'minitest/autorun'
+
+## our own code
+require_relative  'fmtfix'
+
+
+
+
+class TestHeaders< Minitest::Test
+
+TESTS = <<TXT
+
+###
+#  round headers
+
+Round 1
+
+### -- allow optional colon e.g.
+Playoff:
+Round 21:
+
+
+
+###
+#  bracket date headers
+[Aug 9]
+[Fri Aug 9]
+[Fri  Aug 9]
+[Fri, Aug 9]
+[Fri, Aug 9 2024]
+[Fri, Aug 9, 2024]
+[Aug 9, 2024]
+[Aug 9, 2024]
+[Aug  9]
+
+
+
+#  -- classic - month day
+[Jul 4]
+[Jul 5]
+
+## -- weekday month day
+[Fri Nov 16]
+[Wed Dec 12]
+[Sat Dec 8]
+[Sat Aug 18]
+[Sat Nov 16]
+
+[Wed Feb 6]
+[Sat Feb 16]
+[Tue Feb 26]
+
+
+[Fri, Nov 16]
+[Fri,  Nov 16]
+
+## -- month day year
+[Aug 18, 2004]
+[Aug 18 2004]
+[Sep 4, 2004]  
+[Sep 4 2004]
+
+
+[Aug 7 1999]
+[Sep 4 1999]
+[Oct 23 1999]
+[Nov 20 1999]
+[Apr 1 2000]
+
+[Aug 18, 2004]
+[Sep 4, 2004]
+[Sep 8, 2004]
+[Nov 19, 2003]
+[Oct 15, 2008]
+
+
+
+
+
+### --  with (double) space typo
+[Jul  4]
+[Jul  5]
+
+
+###  -- with around
+[around Mar 29]
+[around Apr 27]
+[ca. Nov 1]
+[c. Nov 1]
+
+
+
+
+## -- weekday day month
+[Thur 30 Aug] 
+[Wed 6 Feb]
+[Sat 16 Feb]
+[Tue 26 Feb]
+
+
+
+###
+##   bracket  date leg headers
+[Aug 4,5]
+[Aug 13,14]
+[Aug 20,21]
+[Mar 4, 5]
+[Mar 11, 12]
+[Apr 1, 2]
+[Apr 1,   2]
+
+[Nov 24 and 27]
+[Nov 24 and 28]
+[Nov 24   and   28]
+
+[Feb 27 and Mar 7]
+[Feb 28 and Mar 7]
+
+[Nov 24 & 28]
+[Nov 24  &   28]
+[Nov 24&28]
+
+
+
+## bracket date range headers
+[Aug 4-6]
+[Aug 13-16]
+[Aug 20-23]
+[Aug 4 - 6]
+[Aug 13 - 16]
+[Aug 20 - 23]
+
+[Jul 30-Aug 1]
+[Sep 30-Oct 1]
+[Sep 29-Oct 1]
+[Mar 30 - Apr 1]
+[Jul 30 - Aug 1]
+[Sep 30 - Oct 1]
+[Sep 29 - Oct 1]
+[Mar 30 - Apr 1]
+
+
+
+
+
+##   HEADER_DATE_N_CITY_RE
+## bracket date headers w/ city
+
+[Jun 3, Ferrol] 
+[Apr 2, Wembley]
+[Feb 16, 2020, Brasília]
+[Apr 11, 2021, Brasília]
+
+
+
+##  HEADER_ROUND_N_DATE_RE 
+##  note - might be date range or date list
+
+Round 24 [Mar 21]
+
+Round 24 [Mar 21, 22]
+Round 24 [Mar 21-23]
+Round 2 [Aug 4-6]
+Round 1 [Aug 13-16]
+Round 2 [Aug 20-23]
+
+
+##  HEADER_ROUND_N_DATE_N_CITY_RE 
+
+Final [May 1, Klagenfurt]
+
+
+
+##   HEADER_ROUND_N_CITY_N_DATE_RE 
+## reverse
+
+Final [Graz, May 12]
+Super Cup Final [Graz, Jul 6]
+Final [London, Feb 27]
+
+
+
+###
+##   HEADER_DATE_ALT_RE
+[07-09]  
+[30-05, Thaur]
+
+
+
+### 
+## alternate date header (no brackets incl. year)
+##  HEADER_DATE_II_RE
+##  note - no enclosing brackets []!!!
+
+Aug 7 1999
+Sep 4 1999
+Oct 23 1999
+Nov 20 1999
+Apr 1 2000
+
+7 Aug 1999
+4 Sep 1999
+23 Oct 1999
+20 Nov 1999
+1 Apr 2000
+
+
+
+## with two-digit year
+[Jan 25/87]
+[Jan 28/87]
+
+[Jan 28/00]
+[Jan 28/01]
+[Jan 25/20]
+
+[Jan 31 and Feb 4/87]
+[Feb 1 and 4/87]
+
+
+## with alt style for weekday at the end
+
+[Mar 23, Mon]
+[Mar 25, Wed]
+[Apr 1, Wed]
+[May 3, Sun]
+[Jul 26, Sun]
+
+
+TXT
+
+
+def xxx_test_dates
+   m=HEADER_DATE_II_RE.match( 'Aug 7 1999' )
+   pp HEADER_DATE_II_RE
+   pp m
+
+   assert m
+end
+
+
+
+def test_headers
+
+  ## norm text
+   txt = TESTS
+   txt = txt.gsub( "\t", '  ' )
+   txt = txt.gsub( "\r\n", "\n" )
+   ## add smart quotes and unicode minus/hyphen etc.
+
+
+  txt.each_line do |line|
+       line = line.rstrip
+
+        next  if line.match( /^[ ]*$/ ) || line.start_with?( '#')
+  
+
+        ## note - handle_header returns nil if no match
+        ##            otherwise the reformatted (new) line !!!
+      
+        newline = handle_header( line.rstrip )
+        if newline
+                   puts "  OK #{newline}" 
+                   assert true
+        else
+                   puts "!! header NOT matching - #{line}"
+                   assert false
+        end
+  end
+end  # method test_headers
+end  # class TestHeaders
+
+
+
+puts "bye"
+

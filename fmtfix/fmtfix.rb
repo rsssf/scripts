@@ -33,6 +33,7 @@ end
 
 
 require_relative 'fmtfix/rounds'
+require_relative 'fmtfix/dates_helpers'
 require_relative 'fmtfix/dates'
 require_relative 'fmtfix/headers'
 
@@ -134,39 +135,43 @@ end
 
 
 
-PATH = [
-   '../tables',
-   '../tables/tableso',
-   '../tables/tabless',
-   '../tables/tablesd',
-   '../tables/tablese',
-]
 
-args = ARGV
+if __FILE__ == $0
 
 
-opts = {  update:  false,
-       }
+  PATH = [
+     '../tables',
+     '../tables/tableso',
+     '../tables/tabless',
+     '../tables/tablesd',
+     '../tables/tablese',
+  ]
 
-parser = OptionParser.new do |parser|
-  parser.banner = "Usage: #{$PROGRAM_NAME} [options] <.txt files> or <config slugs>"
+  args = ARGV
 
-   parser.on( "-u", "--update",
-               "turn on update; write to production repo (default: #{opts[:update]})" ) do |update|
-     opts[:update] = true
-   end
+  opts = { update:  false,
+         }
+
+  parser = OptionParser.new do |parser|
+    parser.banner = "Usage: #{$PROGRAM_NAME} [options] <.txt files> or <config slugs>"
+
+     parser.on( "-u", "--update",
+                 "turn on update; write to production repo (default: #{opts[:update]})" ) do |update|
+       opts[:update] = true
+     end
+  end
+
+
+  parser.parse!( args )
+
+
+
+  main( args, 
+          path:   PATH,
+          update: opts[:update] )
+
+
+  puts "bye" 
+
 end
-
-
-parser.parse!( args )
-
-
-
-main( args, 
-        path:   PATH,
-        update: opts[:update] )
-
-
-puts "bye" 
-
 
