@@ -32,6 +32,38 @@ def find_file( name, path: )
 end
 
 
+
+def self.read_patterns( path )
+     txt = read_text( path )
+
+     names = [] # array of lines (with words)
+     txt.each_line do |line|
+       line = line.strip
+
+       next if line.empty?
+       next if line.start_with?( '#' )   ## skip comments too
+
+       ## strip inline (until end-of-line) comments too
+       ##   e.g. Janvier  Janv  Jan  ## check janv in use??
+       ##   =>   Janvier  Janv  Jan
+
+       line = line.sub( /#.*/, '' ).strip
+       ## pp line
+
+        ### use squish  - remove more than one inline space
+         line = line.gsub( /[ ]{2,}/, ' ' )
+
+       names << line
+     end
+     names
+end
+
+
+
+
+
+
+
 require_relative 'fmtfix/rounds'
 require_relative 'fmtfix/dates_helpers'
 require_relative 'fmtfix/dates'

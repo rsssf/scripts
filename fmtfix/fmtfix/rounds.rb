@@ -5,7 +5,7 @@
 ##  eg. round  26   -  todo/fix - later use squish to autofix!! 
 
 
-ROUND_PAT = %q{
+ROUND_PAT_BASE = %q{
                Round [ ]{1,2} \d{1,2}     ## e.g. round 1, round 2, etc.
         
              | Preliminary [ ] round
@@ -65,4 +65,16 @@ ROUND_PAT = %q{
              | Playoff                
 
 }        
+
+
+##
+## add more pattern via config
+##   note -
+##     fix - use root relative to this file!!!
+ names = read_patterns( './fmtfix/config/rounds_en.txt' )
+
+
+ROUND_PAT = ROUND_PAT_BASE + ' | ' + names.join( ' | ' )
+pp ROUND_PAT
+
 

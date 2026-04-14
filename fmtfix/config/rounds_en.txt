@@ -1,0 +1,51 @@
+##
+# rounds in english (en)
+#
+#
+#  note:  limited support for regex syntax supported
+#        use ? 
+#        use () for groups
+#    and use |
+
+#    note - leading and trailing spaces get removed
+#              and inline spaces squished (reduced to one)
+
+##
+##  note - inline spaces get translated to [] e.g.
+###        UNLESS (IF NOT) [] present in line!!!
+##   1/16 finals   =>  1/16 [ ] finals
+##   1/8 finals?   =>  1/8 [ ] finals? 
+
+
+##
+##   note - to processing modes
+##    if regex metachars found - line is regex!!
+##    if no regex metachars found - line is plain and get preprocesed
+   
+
+##
+##  check how to support here
+##               Round [ ]{1,2} \d{1,2}     ## e.g. round 1, round 2, etc.
+     
+
+##
+##  note - always remove leading & trailing spaces
+##              and squish inline spaces 
+
+
+1/32 [ ] finals?
+1/16 [ ] finals?
+1/8  [ ] finals?  
+1/4  [ ] finals?
+1/2  [ ] finals?
+
+Eight   [ -]? finals? 
+Quarter [ -]? finals?
+Semi    [ -]? finals? 
+   
+Super [ ]? cup [ ] final
+
+Deciding [ ] match
+
+
+
