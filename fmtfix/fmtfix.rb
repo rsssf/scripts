@@ -31,13 +31,13 @@ require_relative 'fmtfix/headers'
 
 
 require_relative 'fmtfix/base'
-require_relative 'fmtfix/headings'
 require_relative 'fmtfix/errata'
 require_relative 'fmtfix/score'
 require_relative 'fmtfix/goals'
 require_relative 'fmtfix/topscorers'
 require_relative 'fmtfix/tables'
 require_relative 'fmtfix/about'
+require_relative 'fmtfix/outline'
 
 
 
@@ -52,6 +52,26 @@ def fmtfix( filename, outdir: )
         outfile = File.join(  outdir, "#{basename}#{extname}" )
       
         newtxt = autofix( txt )
+
+      
+        ##
+        ## add (quick) outline 
+        outline = build_outline( newtxt )
+
+        ## add inside  <!-- source: ...  [auto-add here] -->
+        ## e.g.
+        ##   <!--
+        ##      source: https://rsssf.org/tableso/oost98.html
+        ##    -->
+
+        newtxt = newtxt.sub( %r{^[ ]*<!-- 
+                       [ \n]* 
+                         (source: .+?) 
+                        [ \n]*
+                      -->
+                   }ix,
+               "<!--\n  \\1\n\n#{outline} -->" )
+        
 
         write_text( outfile, newtxt )
 end

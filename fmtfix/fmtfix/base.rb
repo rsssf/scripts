@@ -2,6 +2,14 @@
 
 def autofix( txt )
 
+ ##
+ ## make sure no tabs (expand to two spaces)
+  txt = txt.gsub( "\t", '  ' )
+  txt = txt.gsub( "\r\n", "\n" )  ## unify newline
+
+  ## fix unicode space !! use code point!!
+  txt = txt.gsub( /[ ]/, ' ' )
+
 ###
 ##  step 1
 ##   split by horizontal rules (hrs)
@@ -42,9 +50,6 @@ def autofix( txt )
 
  
     txt = handle_about( txt )  ## e.g. about this document
-
-    txt = handle_headings( txt )
-
 
 
     txt = handle_tables( txt )     ## e.g. final/halfway table (aka standings)

@@ -25,6 +25,32 @@ end
 
 
 
+##
+## note simple/compact table standing format needs more thinking
+##   will match
+## FC Schalke 04        1-3  1. FSV Mainz 05
+## Hannover 96          3-1  1. FC Nürnberg
+## FC Schalke 04        0-1  1. FC Kaiserslautern
+## Hannover 96          2-0  1. FSV Mainz 05
+## FSV Mainz 05             3-1 1. FC Köln
+##
+##   - add a required ranking  in the beginning e.g. 1., 2. or such?
+
+=begin                 
+                   | (?:  ##  or compact/min form  -- 22  37-15  51
+                          ##     maybe allow spaces later inbetween 37- 15 - why? why not?
+                          ##    1. 1. FC Köln   30 17 11  2  78- 40  45
+
+                         [ ]+ \d{1,3}                 ## played
+                          [ ]+ \d{1,3} [ ]? -[ ]? \d{1,3}      ##  gf-ga
+                          [ ]+  \d{1,3} \b            ##  pts
+                     )
+=end
+
+
+##
+##   GP   W   L   D   GF  GA  Pts
+
 TABLE_RE = %r{
       
            ### optional table header 
@@ -46,17 +72,32 @@ TABLE_RE = %r{
              ##    MUST NOT match  standing line e.g.  10  3  4
              ##      or         table heading (see below)
              ##      or   -----  (old style structured heading left overs)
-                    (?!    [^\n]+?  [ ]+ \d{1,3} [ ]+ \d{1,3} [ ]+ \d{1,3}
-                        |  (?: GP | M |Team ) [ ]
-                        |  -{3,}
+                    (?!  (?:   [^\n]+?  [ ]+ \d{1,3} [ ]+ \d{1,3} [ ]+ \d{1,3}
+                           |  [ ]* (?: GP | M | Team ) [ ]
+                           |  -{3,}
+                        )
                      )            
 
-             (?<header>  [^=*:\[\]\n]+?)
+              ## exclude comma (,) - why? why not?
+              ##   and numbers  - unless group 1
+              ## e.g. Kaczor 78 - Dreßel 19, Steinkogler 50,
+              ## B'schweig  2-1 Schalke    (Handschuh 38, Popivoda 55 - Fischer 82)
+              ##  M'gladbach 2-1 1. FC Köln (Jensen 6, Wittkamp 35 - D.Müller 78)
+              ##   Kraft 3, E.Kremers 38)
+              ##  Schalke     4-0 Tasmania    (Klose 2, 78, Herrmann 40, Kreuz 82)
+              ##
+              ## allow name such as
+              ##    USL - 1ST DIVISION (2nd Division)
+
+
+             (?<header>  [^=*:,0-9\[\]\n]+?  
+                          ([ ] \d{1,2} \b)?   ## optional number only at the end e.g. group 1
+                     )
                   :?  ## optional colon (:) e.g. final table: 
                   ## cut-off everything separated by more than three spaces
                   ##   e.g. might be "inline" table heading (follow table header name)
                   ##  e.g. Group 1                  M     W     T     L    GF    GA    DIF   PTS
-                  (?: [ ]{4,} [^\n]+? )?
+                  (?: [ ]{4,} (?: GP | M |Team ) [ ]  [^\n]+? )?
               [ ]*
              ## note - allow optional blank line - why? why not?   
              (?:  \n ^[ ]* )?
@@ -94,6 +135,8 @@ TABLE_RE = %r{
   ## Hudson Valley Quickstrike LB12  11   1   0   26   9   33
   ##
   ##    17    11     5     1    40    16    +24    38
+  ##  or
+  ###  + 1.DC United                       32 17  6/ 3  6 65-43 57  
   
          ^
          (?:  
@@ -103,18 +146,12 @@ TABLE_RE = %r{
 
                       \d{1,3}
                  [ ]+ \d{1,3}  ## win   
-                 [ ]+ \d{1,3}  ## draw   
+ (?: [ ]+ | [ ]* / [ ]* ) \d{1,3}  ## draw   
                  [ ]+ \d{1,3}  ## lose   
                  [ ]+ \d{1,3}  (?:  [ ]* [:-] [ ]*  
                                   | [ ]+ )  \d{1,3} 
                  [ ]+ [+-]? \d{1,3} \b  # might be diff or point allow +/-!!
                    )
-                   | (?:  ##  or compact/min form  -- 22  37-15  51
-                          ##     maybe allow spaces later inbetween 37-15 - why? why not?
-                         [ ]+ \d{1,3}                 ## played
-                          [ ]+ \d{1,3} [ ]? -[ ]? \d{1,3}      ##  gf-ga
-                          [ ]+  \d{1,3} \b            ##  pts
-                     )
                  )
                [^\n]*?
           )
