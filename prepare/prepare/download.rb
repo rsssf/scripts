@@ -1,9 +1,6 @@
 
 
 
-TITLE_RE = %r{<TITLE>(?<text>.*?)</TITLE>}ixm
-
-
 def download_pages( pages, force: )
   pages.each_with_index do |config,i|
 

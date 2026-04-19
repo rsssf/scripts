@@ -20,6 +20,10 @@ class PageConverter
     ##   replace \r\n (form feed \r) used by Windows - ff+lf; 
     ##         just use \n (new line a.k.a. line feed)
     html = html.gsub( "\r\n", "\n" )
+    
+    ##  convert tabs to two spaces (or use four??)
+    html = html.gsub( "\t", '   ' )
+
 
     
     html = convert_html_entities( html, url: url )
@@ -40,15 +44,7 @@ class PageConverter
 
 
     txt   = html_to_txt( html, url: url )
-  
-    header = <<EOS
-  <!--
-     source: #{url}
-    -->
-  
-EOS
-  
-    header+txt  ## return txt w/ header
+    txt 
   end  ## method convert
 
   
