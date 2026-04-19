@@ -1,50 +1,3 @@
-############
-#  to run use:
-#   $ ruby sandbox/mkpages.rb 
-
-##
-###  generate web site
-##      - web pages in .html from .txt
-
-
-require_relative 'helper'
-
-
-
-
-## use workdir or rootdir or such - why? why not?
-def collect_datafiles( *globs, 
-                        dir:, 
-                        exclude_edits: true )
-   ###
-   ## note - auto-add  /**/*.txt to globs!!!
-
-   files = []
-   globs.each do |glob|
-      Dir.chdir( dir) do 
-        more_files =  Dir.glob( "#{glob}/**/*.txt" )
-
-##
-## auto-exclude/ignore
-##      .edits.txt !!!
-##   e.g. br2026.edits.txt and such
-    if exclude_edits
-        more_files = more_files.select do |file|
-             if File.basename( file ).downcase.end_with?( '.edits.txt')
-                 false
-             else
-                 true
-             end
-        end
-   end
-   
-        puts "==> #{glob}/**/*.txt  (exclude_edits: #{exclude_edits})"
-        puts "  #{more_files.size} file(s)"
-        files += more_files
-     end
-   end
-   files
-end
 
 
 ## (i)  replace anchored names
@@ -90,31 +43,6 @@ HX_RE = %r{^
                      [ ]*
             $}x
 
-
-def build_toc( txt, min: 2 )
-
-     hx =  txt.scan( HX_RE )
-    
-     buf = String.new
-
-     ## require a min of 2 headings
-     if hx.size >= 2
-
-       buf += "  Table of contents:\n\n"
-
-       hx.each do |marker,text,ref|
-          ## indent text by marker size (multiply by 2 - e.g. use 2x??)
-          ## buf << "    %-6s %s" % [marker, ' '*marker.size]
-          buf << "   %s" % [' '*marker.size]
-          buf <<  "  "
-          buf << text
-          buf << "  (see <a href=\"\##{ref}\">§#{ref}</a>)"    if ref
-          buf << "\n"
-       end
-     end
-
-    buf
-end
 
 
 HTML_COMMENT_RE = %r{<!-- 
@@ -223,7 +151,6 @@ banner += "<a href=\"#{rsssf_url}\">original @ rsssf.org</a>"
 banner += " - "
 banner += "<a href=\"#{github_url}\" title=\"yes, you can!\">view/edit this .txt page @ github</a>"
 
-=begin
 banner += " - "
 banner += "<a href=\"\">football.txt version</a>"
 banner += " ("
@@ -231,7 +158,6 @@ banner += "<a href=\"\">.json</a>"
 banner += ", "
 banner += "<a href=\"\">.log</a>"
 banner += ")"
-=end
 
 banner += "\n"
 
@@ -298,44 +224,4 @@ HTML
 
    page
 end
-
-
-def build_pages( files, dir: )
-    files.each_with_index do |file,i|
-      dirname   = File.dirname( file )
-      basename  = File.basename( file, File.extname( file ))
-
-      puts "==> [#{i+1}/#{files.size}] building page #{file}..."
-
-      path = "#{dir}/#{file}"
-      txt = read_text( path )
-      html = build_page( txt, file: file )
-
-      write_text( "./tmp-site/#{dirname}/#{basename}.html", html )
-    end
-end
-
-
-
-### note - exclude 
-###     braz2024.edits.txt.
-
-root_dir = '../tables'
-globs = ['tables', 'tables[a-z]']
-
-files = collect_datafiles( *globs, dir: root_dir )
-puts "  #{files.size} file(s)"
-#=> 632 file(s)
-
-
-test_files = [files[0], files[100], files[200], files[300]]
-build_pages( test_files, dir: root_dir )
-
-
-
-puts "bye"
-
-
-
-
 

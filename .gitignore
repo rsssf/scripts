@@ -10,6 +10,10 @@ tmp-fmtfix/
 tmp-*/
 o/
 
+## ignore generated pages
+site/
+
+
 #########
 ### ignore logs and errors
 logs.txt
