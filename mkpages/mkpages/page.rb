@@ -23,18 +23,20 @@ OPT_REF = %q{
          }
 
 
-HX_RE = %r{^
-                   [ ]* 
-                     ## negative lookahead
+HX_RE = %r{          ## negative lookahead
                      ##   do NOT match  =-=
                      ##   do NOT match  ===========  (without any heading text!!)
                      ##     e.g. 
                      ##       Fall season
                      ##       ===========
 
-                    (?!     =-= 
-                         |  ={1,} [ ]* $
+                    (?! ^[ ]* (?:    =-= 
+                                 |  ={1,} [ ]* $
+                               )
                      )  
+
+                     ^        
+                    [ ]* 
 
                   (?<marker> ={1,6})   
                      [ ]*
@@ -77,6 +79,11 @@ end
 
 def build_page( txt, file: )
 
+##
+##  clean-up windows-style newlines - why? why not?
+    txt = txt.gsub( "\r\n", "\n" )
+
+    
     title = find_title_in_comment( txt ) || 'n/a'
 
 
@@ -147,16 +154,18 @@ github_url = "https://github.com/rsssf/tables/blob/master/#{dirname}/#{basename}
 
 
 banner = String.new
+banner += "<a href=\"../index.html\" title=\"Tables Index A-Z\">/</a>"
+banner += " - "
 banner += "<a href=\"#{rsssf_url}\">original @ rsssf.org</a>"
 banner += " - "
 banner += "<a href=\"#{github_url}\" title=\"yes, you can!\">view/edit this .txt page @ github</a>"
 
 banner += " - "
-banner += "<a href=\"\">football.txt version</a>"
+banner += "<a href=\"\" title=\"SOON!\">football.txt version</a>"
 banner += " ("
-banner += "<a href=\"\">.json</a>"
+banner += "<a href=\"\" title=\"SOON!\">.json</a>"
 banner += ", "
-banner += "<a href=\"\">.log</a>"
+banner += "<a href=\"\" title=\"SOON!\">.log</a>"
 banner += ")"
 
 banner += "\n"

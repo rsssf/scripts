@@ -15,7 +15,7 @@ require 'cocos'
 require_relative 'mkpages/collect_datafiles'
 require_relative 'mkpages/page'
 require_relative 'mkpages/toc'     ## table of contents (toc)
-
+require_relative 'mkpages/index'
 
 
 
@@ -28,6 +28,7 @@ require_relative 'mkpages/toc'     ## table of contents (toc)
  opts = {
    outdir:     './site', 
    rootdir:    '../tables',
+   index:      false,
 }
 
 
@@ -42,6 +43,10 @@ require_relative 'mkpages/toc'     ## table of contents (toc)
      parser.on( "--rootdir DIR",
                  "root (& working) dir(ectory) for collecting source txt pages (default: #{opts[:rootdir]})" ) do |rootdir|
        opts[:rootdir] = rootdir
+     end
+     parser.on( "--index",
+                 "turn on index page generation (default: #{opts[:index]})" ) do |index|
+       opts[:index] = true
      end
   end
 
@@ -98,6 +103,9 @@ end
 
 build_pages( files, dir: rootdir,
                          outdir: outdir )
+
+build_index( files, dir: rootdir, 
+                         outdir: outdir )   if opts[:index]
 
 
 
