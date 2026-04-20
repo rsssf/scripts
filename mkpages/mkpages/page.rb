@@ -124,7 +124,15 @@ def build_page( txt, file: )
 
    txt = txt.gsub( SEE_APAGE_RE ) do |_|
                 m = Regexp.last_match
-                "see page <a href=\"#{m[:page]}.html\">#{m[:page]}</a>"        
+
+        ### note - auto-patch page href for "flattened" space
+        ##            e.g. dirs /tables & /tables[a-z] removed
+        ##       
+               page = m[:page]
+               page = page.sub( %r{^\.\./tables[a-z]?/}, '' )
+               page = page.sub( %r{^\.\./}, '' )
+
+                "see page <a href=\"#{page}.html\">#{page}</a>"        
             end
 
 
@@ -154,7 +162,7 @@ github_url = "https://github.com/rsssf/tables/blob/master/#{dirname}/#{basename}
 
 
 banner = String.new
-banner += "<a href=\"../index.html\" title=\"Tables Index A-Z\">/</a>"
+banner += "<a href=\"./index.html\" title=\"Tables Index A-Z\">/</a>"
 banner += " - "
 banner += "<a href=\"#{rsssf_url}\">original @ rsssf.org</a>"
 ## banner += " @ <a href=\"https://rsssf.org\">rsssf.org</a>"
@@ -225,6 +233,7 @@ body   += buf
 <!DOCTYPE html>   
 <html>
 <head>
+   <meta charset="utf-8">
    <title>#{title}</title>
 </head>
 <body>

@@ -93,7 +93,7 @@ def build_pages( files, dir:, outdir: )
       dirname   = File.dirname( file )
       basename  = File.basename( file, File.extname( file ))
 
-      outpath = "#{outdir}/#{dirname}/#{basename}.html"
+      outpath = "#{outdir}/#{basename}.html"
       puts "==> [#{i+1}/#{files.size}] building page #{outpath} from (#{file})..."
 
       path = "#{dir}/#{file}"

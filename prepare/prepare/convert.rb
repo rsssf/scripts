@@ -40,12 +40,108 @@ def find_title( html )
 end
 
 
+=begin
+e.g.
+
+Authors: Hans Schöggl, Jan Schoenmakers and Karel Stokkermans
+
+Last updated: 7 Mar 2023
+
+-or-
+
+Authors: Ambrosius Kutschera
+and Karel Stokkermans
+Last updated: 31 Oct 2004
+
+-or-
+
+Author: RSSSF
+
+Last updated: 15 Jun 2022
+
+-or-
+
+Authors: Andreas Exenberger, Hans Schöggl
+and Karel Stokkermans
+
+Last updated: 15 Jul 2022
+
+=end
+
+ABOUT_META_RE = %r{
+    ## (i) author(s) info
+   \b authors? [ ]* :
+    \s+
+      (?<author> .+?)    ## note - non-greedy (may incl. newline break!!)
+    \s+
+    ## (ii) followed by date
+    \b last [ ]+ updated [ ]*:
+      \s*
+      (?<date> \d{1,2} [ ]+              ## day
+                [a-z]{3,10} [ ]+         ## month  
+                \d{4} \b)                ## year
+}ixm
+
+
+
+## change name to authors_n_updated or such - why? why not?
+def find_author_n_date( txt )
+  ##
+  ## fix/todo: move authors n last updated 
+  ##  whitespace cleanup  - why? why not?? 
+
+  if m=ABOUT_META_RE.match( txt )
+     
+    authors = m[:author].strip.gsub(/\s+/, ' ' )  # cleanup whitespace; squish-style
+    authors = authors.gsub( /[ ]*,[ ]*/, ', ' )    # prettify commas - always single space after comma (no space before)
+
+    updated = m[:date].strip.gsub(/\s+/, ' ' ) 
+ 
+    [authors, updated]
+  else
+     ## report error or raise exception??
+     ##  return nil for now
+     [nil,nil]  ## or return (single) nil ??
+  end
+end
+
+
+
+
+
+
+###
+##  remove trailing about document meta backmatter
+##  == About this document  ‹§about›
+## 
+
+START_W_ABOUT_RE = %r{  \A
+                  [ \n]*   ## trailing spaces or blank lines
+                  ={2,} [ ]* About [ ]+ this [ ]+ document
+                   .*?
+              }ix
+
+START_W_NAV_RE = %r{  \A
+                [ \n]*    ## trailing spaces or blank lines 
+                ‹.+?›    ##  link  (exlude named anchor - why? why not? §)
+             }ix
+          
+             
+
+
+###
+#  note  - check for special cases (later) with no about this docu section!!
+#
+##   https://rsssf.org/tablesb/braz98.html
+##         has not about document section
+#       and only a last update: 22 Apr 1999   line (no author)
 
 
 def do_edits( txt )
 
   ### record edits in its own txt file  
-  edits = String.new
+  edits = []
+  about = nil
 
 ###
 ##  step 1
@@ -58,25 +154,23 @@ def do_edits( txt )
 
    
    sects = sects.select do |sect|
-      nav = %r{\A
-               [ \n]*    ## trailing spaces or blank lines 
-                ‹.+?›    ##  link
-             }ix.match(sect)
-        
-        if nav
+             if START_W_NAV_RE.match?( sect )
+               edit = String.new 
+               edit += "-- removing nav(igation) section:"
+               edit += sect
 
-            edit = String.new 
-            edit += "-- removing nav(igation) section:"
-            edit += sect
+               puts edit
 
-            puts edit
-
-            ## record edit
-            edits += edit
-            edits += "\n"
-        end     
-      nav ? false : true
-    end
+               edits << edit   ## record edit
+         
+               false           ## remove (nav) section 
+             elsif START_W_ABOUT_RE.match?( sect )
+               about = sect
+               false           ## remove (about) section
+             else
+               true            ## keep section 
+             end     
+           end
 
    ## sects.each_with_index do |sect,i|
    ##  puts "==> #{i+1}/#{sects.size}"
@@ -96,7 +190,10 @@ def do_edits( txt )
 
 
    ## note - return (new) txt AND recorded edits (& erratas)
-   [txt, edits.empty? ? nil : edits]
+   ##        return edits as array or joined (single) string - why? why not?
+   [txt, 
+    edits.empty? ? nil : edits.join("\n"),
+    about]
 end
 
 
@@ -117,25 +214,44 @@ def convert_pages( pages, outdir: )
     txt = Rsssf::PageConverter.convert( html, url: url )
 
 
-    txt, edits = do_edits( txt )
+    txt, edits, about = do_edits( txt )
 
 
     basename = File.basename( page, File.extname( page ))
     dirname  = File.dirname( page )
 
 
+
+
     title  =  find_title( html ) || 'n/a'
-    ## note - title quick typo fix (in brazil) remove >
-    title = title.gsub( '>', '' )
+    ## note - title quick typo fix (in brazil) remove <
+    ##   e.g. <TITLE>Brazil 1988<</TITLE>
+    title = title.gsub( '<', '' )
 
+    authors, updated = about ? find_author_n_date( about ) : [nil,nil]
 
-   header = <<EOS
-  <!--
-     title:  #{title}
-     source: #{url}
-    -->
-  
+ header_props = <<EOS 
+     title:   #{title}
+     source:  #{url}
 EOS
+
+   if authors && updated
+      ##  assume plural if and or command (,) 
+      header_props +=  if /\band\b|,/i.match( authors )
+                         "     authors: #{authors}\n"
+                       else
+                         "     author:  #{authors}\n"
+                       end
+      header_props +=    "     updated: #{updated}"
+   end
+
+
+  header = <<EOS 
+  <!--
+#{header_props}    
+    -->
+EOS
+
 
      ## note - (auto-) add (comment) header to written out txt!!!
      write_text( "#{outdir}/#{dirname}/#{basename}.txt", header+txt )
@@ -143,6 +259,11 @@ EOS
      ## todo/check - delete edits file if no edits - why? why not?
      if edits
         write_text( "#{outdir}/#{dirname}/#{basename}.edits.txt", edits )
+     end
+
+     ## todo/check - delete about file if no about - why? why not?
+     if about
+        write_text( "#{outdir}/#{dirname}/#{basename}.about.txt", about )
      end
 
   end

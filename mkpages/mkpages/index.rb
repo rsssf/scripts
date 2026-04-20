@@ -75,7 +75,7 @@ def build_index( files, dir:, outdir: )
       title = find_title_in_comment( txt ) || 'n/a'
       
       idx = master[first] 
-      idx[basename] = { path: "#{dirname}/#{basename}.html",
+      idx[basename] = { path: "#{basename}.html",
                         title: title }
    end
    print "\n"
@@ -88,14 +88,14 @@ def build_index( files, dir:, outdir: )
 
    master.each do |first, idx|
       if idx.size > 0
-         header =     first == '_' ? '0-9' : first
+         header =     first == '_' ? '0-9' : first.upcase
          buf << "<p><b>#{header}</b> (#{idx.size}) - \n"
 
          idx.each do |key, h|
             path =  h[:path]
             title = h[:title]
 
-            buf << "<code>#{key}<code> <a href=\"#{path}\">#{title}</a>\n"
+            buf << "<code>#{key}</code> <a href=\"#{path}\">#{title}</a>\n"
          end
        
          buf << "</p>\n\n"
