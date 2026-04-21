@@ -13,10 +13,14 @@ require 'cocos'
 
 
 require_relative 'mkpages/collect_datafiles'
-require_relative 'mkpages/page'
-require_relative 'mkpages/toc'     ## table of contents (toc)
-require_relative 'mkpages/index'
 
+require_relative 'mkpages/build_page'
+require_relative 'mkpages/build_index'
+require_relative 'mkpages/build_codes'
+
+require_relative 'mkpages/page_toc'     ## table of contents (toc)
+require_relative 'mkpages/page_banner'
+require_relative 'mkpages/page_layout'   ## aka master page layout/template
 
 
 
@@ -30,6 +34,7 @@ require_relative 'mkpages/index'
    rootdir:    '../tables',
    index:      false,
    sample:     false,
+   codes:      false,
 }
 
 
@@ -48,6 +53,10 @@ require_relative 'mkpages/index'
      parser.on( "--index",
                  "turn on index page generation (default: #{opts[:index]})" ) do |index|
        opts[:index] = true
+     end
+     parser.on( "--codes",
+                 "turn on codes (index) page generation (default: #{opts[:codes]})" ) do |codes|
+       opts[:codes] = true
      end
 
      parser.on( "--sample",
@@ -81,10 +90,16 @@ files = collect_datafiles( *globs, dir: rootdir )
 puts "    #{files.size} source .txt file(s) found"
 
 
-
 ###
 ### for testing only sample pages (do NOT generate all)
-files = [files[0], files[100], files[200], files[300]]   if opts[:sample]
+files = [files[0], files[20],
+         files[100], files[101], 
+         files[200], files[201], files[230],
+          files[300]]   if opts[:sample]
+
+
+
+
 
 
 
@@ -105,6 +120,66 @@ def build_pages( files, dir:, outdir: )
     end
 end
 
+def build_style( outdir: )
+
+  css =<<CSS
+
+a, a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+/*********
+  reset h1,h2,h3,h4,h5,h6 formatting inside pre blocks 
+  ****/
+ 
+  pre h1,
+  pre h2,
+  pre h3,
+  pre h4,
+  pre h5,
+  pre h6 { /* color: red;  */ 
+            font-size: 100%;
+            margin: 0;
+             }
+
+
+
+   pre h1, 
+   pre h2, 
+   pre h3 {
+      font-size: 150%;
+   }
+
+  pre h4 {
+     /* add blue-ish background */
+     background-color: #CCCCFF;
+     padding-top: 1px;
+     padding-bottom: 1px;
+  }
+
+
+  pre h5 {
+            /* bold by default keep */
+         }           
+
+ pre h6 {
+            font-weight: normal; 
+            /* use underline */
+            text-decoration: underline;
+         }           
+
+CSS
+
+   write_text( "#{outdir}/style.css", css )
+end
+
+
+
 
 build_pages( files, dir: rootdir,
                          outdir: outdir )
@@ -112,6 +187,11 @@ build_pages( files, dir: rootdir,
 build_index( files, dir: rootdir, 
                          outdir: outdir )   if opts[:index]
 
+build_codes( files, dir:    rootdir, 
+                    outdir: outdir )   if opts[:codes]
+
+## write out sitewide stylesheet (style.css)                    
+build_style( outdir: outdir )                    
 
 
 puts "bye"

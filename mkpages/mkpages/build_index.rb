@@ -83,8 +83,8 @@ def build_index( files, dir:, outdir: )
 
 
 
+ 
    buf = String.new
-   buf <<  "<h1>Tables Index A-Z</h1>\n\n"
 
    master.each do |first, idx|
       if idx.size > 0
@@ -103,10 +103,17 @@ def build_index( files, dir:, outdir: )
       end
    end
 
-
-   write_text( "#{outdir}/index.html", buf )
    
-   buf
+   banner = build_site_banner
+   title = "Tables Index A-Z"
+   body =  "<h1>#{title}</h1>\n\n" + buf
+
+   page = build_layout( title: title, body: body,
+                         banner: banner )
+
+   write_text( "#{outdir}/index.html", page )
+   
+   page
 end   
 
 

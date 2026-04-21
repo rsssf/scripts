@@ -7,13 +7,13 @@ ANAME_RE = %r{‹§ (?<ref> [^›]+?) ›}ix
 ## (ii)   replace ref
 ##          see §pbengo
 ##  note - use positive lookahead for › (do NOT incl.) 
-SEE_ANAME_RE = %r{\bsee [ ] § (?<ref> [^›]+?) ?=›}ix
+SEE_ANAME_RE = %r{\bsee [ ] § (?<ref> [^›]+?) (?=›)}ix
 
 ## (iii)  replace page links
 ##          see page 2006f
 ##   see page ../tablesw/worldcup›
 ##  note - use positive lookahead for › (do NOT incl.) 
-SEE_APAGE_RE = %r{\bsee [ ] page [ ] (?<page> [^›]+?) ?=›}ix
+SEE_APAGE_RE = %r{\bsee [ ] page [ ] (?<page> [^›]+?) (?=›)}ix
 
 
 
@@ -107,11 +107,21 @@ def build_page( txt, file: )
 
                 level = m[:marker].size
 
-                if m[:ref]
-                  "<h#{level}>#{'='*level} #{m[:text]} #{'='*level}  <a name=\"#{m[:ref]}\">§#{m[:ref]}</a></h#{level}>"
-                else
-                  "<h#{level}>#{'='*level} #{m[:text]} #{'='*level}</h#{level}>"
-                end
+                ## note - for level 5,6 
+                ##     for now do NOT print markers!!!
+                if level >= 5
+                  if m[:ref]
+                    "<h#{level}>#{m[:text]}  <a name=\"#{m[:ref]}\">§#{m[:ref]}</a></h#{level}>"
+                  else
+                    "<h#{level}>#{m[:text]}</h#{level}>"
+                  end
+                else  
+                  if m[:ref]
+                    "<h#{level}>#{'='*level} #{m[:text]} #{'='*level}  <a name=\"#{m[:ref]}\">§#{m[:ref]}</a></h#{level}>"
+                  else
+                    "<h#{level}>#{'='*level} #{m[:text]} #{'='*level}</h#{level}>"
+                  end
+               end
              end
 
    txt = txt.gsub( ANAME_RE ) do |_|
@@ -134,6 +144,17 @@ def build_page( txt, file: )
                page = page.sub( %r{^\.\./tables[a-z]?/}, '' )
                page = page.sub( %r{^\.\./}, '' )
 
+               ##
+               ## 
+               ##  2023uefanl.html#lga
+               ##   remove .html  and replace # with §
+               page = page.sub( %r{\.html\b}i, '' )
+               page = page.sub( '#', '§' )
+    
+               ## todo/fix - report external links (if any)
+               ##              that is, outside of  rsssf.org
+
+
                 "see page <a href=\"#{page}.html\">#{page}</a>"        
             end
 
@@ -151,100 +172,29 @@ def build_page( txt, file: )
 ##
 ##  fix/fix//fix - must escape &
 
-   buf = txt
-
 
 
 
    dirname   = File.dirname( file )
    basename  = File.basename( file, File.extname( file ))
 
-rsssf_url  = "https://rsssf.org/#{dirname}/#{basename}.html"
-github_url = "https://github.com/rsssf/tables/blob/master/#{dirname}/#{basename}.txt"
-
-
-banner = String.new
-banner += "<a href=\"./index.html\" title=\"Tables Index A-Z\">/</a>"
-banner += " - "
-banner += "<a href=\"#{rsssf_url}\">original @ rsssf.org</a>"
-## banner += " @ <a href=\"https://rsssf.org\">rsssf.org</a>"
-banner += " - "
-banner += "<a href=\"#{github_url}\" title=\"yes, you can! changes tracked @ github\">view/edit this page</a>"
-banner += " ("
-banner += "<a href=\"https://github.com/rsssf/tables/raw/refs/heads/master/#{dirname}/#{basename}.txt\">.txt</a>"
-banner += ")"
-## banner += " @ <a href=\"https://github.com/rsssf\">github</a>"
-banner += " - "
-banner += "<a href=\"\" title=\"SOON!\">football.txt version</a>"
-banner += " ("
-banner += "<a href=\"\" title=\"SOON!\">.json</a>"
-banner += ", "
-banner += "<a href=\"\" title=\"SOON!\">.log</a>"
-banner += ")"
-
-banner += "\n"
-
-
-=begin
--- use  for toc???
-  position: fixed;
-  top: 10px;
-  right: 10px;
-=end
-
-style = String.new
-style += <<CSS
-#toc {
-  float: right;
-  width: 300px;  
-  z-index: 9999;
-  padding: 7px;
-  border: 1px solid #AAA;
-  background-color: #F9F9F9;
-}
-CSS
-
+   banner = build_banner( dirname: dirname, basename: basename )
 
 
 body = String.new
+body   += toc   if toc
 
-if toc.empty?  
-   ## do nothing
-else
-=begin   
-   body   += "<div id=\"toc\">\n"
-   body   += toc
-   body   += "</div>\n"
-=end
+## note - wrap rsssf .txt page in its own pre block 
+body   += "<pre>\n"
+body   += txt
+body   += "</pre>\n"
 
-   body   += toc
-   body   += "\n"
 
-end
-
-body   += buf
-
-=begin
-<style>
-#{style}
-</style>
-=end
-
-   page = String.new
-   page += <<HTML
-<!DOCTYPE html>   
-<html>
-<head>
-   <meta charset="utf-8">
-   <title>#{title}</title>
-</head>
-<body>
-<pre>
-#{banner}
-#{body}
-</pre>
-</body></html>
-HTML
+  ## change body to content - why? why not?
+   page = build_layout( title: title, 
+                        body: body,
+                        banner: banner )
+                       
 
    page
 end
