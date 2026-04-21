@@ -17,6 +17,8 @@ require_relative 'mkpages/collect_datafiles'
 require_relative 'mkpages/build_page'
 require_relative 'mkpages/build_index'
 require_relative 'mkpages/build_codes'
+require_relative 'mkpages/build_site'
+
 
 require_relative 'mkpages/page_toc'     ## table of contents (toc)
 require_relative 'mkpages/page_banner'
@@ -95,30 +97,30 @@ puts "    #{files.size} source .txt file(s) found"
 files = [files[0], files[20],
          files[100], files[101], 
          files[200], files[201], files[230],
-          files[300]]   if opts[:sample]
+          files[300]]      if opts[:sample]
+
+
+site = SiteIndex.build( files, dir: rootdir )
 
 
 
 
+def build_pages( site, outdir: )
+    i=0
+    ## add each_page_with_index  (check why each_page.with_index is not working??)
+    site.each_page do |page|
+    
+      outpath = "#{outdir}/#{page.basename}.html"
+      puts "==> [#{i+1}/#{site.size}] building page #{outpath} (#{page.dirname}/#{page.basename}.txt)..."
 
-
-
-def build_pages( files, dir:, outdir: )
-    files.each_with_index do |file,i|
-      dirname   = File.dirname( file )
-      basename  = File.basename( file, File.extname( file ))
-
-      outpath = "#{outdir}/#{basename}.html"
-      puts "==> [#{i+1}/#{files.size}] building page #{outpath} from (#{file})..."
-
-      path = "#{dir}/#{file}"
-      txt = read_text( path )
-
-      html = build_page( txt, file: file )
+      html = build_page( page )
 
       write_text( outpath, html )
+      i+=1
     end
 end
+
+
 
 def build_style( outdir: )
 
@@ -181,14 +183,11 @@ end
 
 
 
-build_pages( files, dir: rootdir,
-                         outdir: outdir )
+build_pages( site, outdir: outdir )
 
-build_index( files, dir: rootdir, 
-                         outdir: outdir )   if opts[:index]
+build_index( site, outdir: outdir )   if opts[:index]
 
-build_codes( files, dir:    rootdir, 
-                    outdir: outdir )   if opts[:codes]
+build_codes( site, outdir: outdir )   if opts[:codes]
 
 ## write out sitewide stylesheet (style.css)                    
 build_style( outdir: outdir )                    

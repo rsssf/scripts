@@ -46,23 +46,23 @@ end
 
 
 
-def build_codes( files, dir:, outdir: )
-
-   master = {      
-   }  ## master index 
+def build_codes( site, outdir: )
 
 
-   puts "==> building codes (index) for #{files.size} pages..."
+   master = {}  ## master index 
 
 
-   files.each_with_index do |file,i|
+   puts "==> building codes (index) for #{site.size} pages..."
 
-      ## use basename as key
-      dirname = File.dirname( file )
-      extname = File.extname( file )
-      basename = File.basename( file, extname)
 
-      if m=CODES_RE.match(basename)
+   site.each_page do |page|
+
+    
+### move 
+##   to build_site   page!!!
+##    for easy reuse!!!
+
+      if m=CODES_RE.match(page.basename)
       
         alpha         = m[:alpha] 
         
@@ -92,20 +92,15 @@ def build_codes( files, dir:, outdir: )
         full_year += qualifier        if qualifier
         full_year += "_#{version}"    if version    ## add at last
 
-        idx[:dirs][dirname] +=1
+        idx[:dirs][page.dirname] +=1
 
-        ## remove season from title w/ <season> or <year>
-        txt = read_text( "#{dir}/#{dirname}/#{basename}.txt" )
 
-        title = find_title_in_comment( txt ) || 'n/a'
+        idx[:years][full_year] = page
       
 
-        idx[:years][full_year] = {  title: title,
-                                    path:  "#{basename}.html"
-                                 }
-      
+        ### for (re)use move to Page class - why? why not?
         ## XXXX/11
-        title_masked = title.sub( %r{\b
+        title_masked = page.title.sub( %r{\b
                                        [12]\d{3} 
                                          [/-] 
                                     (?:   \d{2}
@@ -119,7 +114,7 @@ def build_codes( files, dir:, outdir: )
 
         idx[:titles][title_masked] +=1
       else
-        puts "!! ERROR - invalid rsssf page basename #{basename} (#{file}); cannot match; sorry"
+        puts "!! ERROR - invalid rsssf page basename #{page.basename} (#{page.pretty_inspect}); cannot match; sorry"
         exit 1
       end
 
@@ -128,8 +123,7 @@ def build_codes( files, dir:, outdir: )
    end
    print "\n"
 
-   pp master
-
+  
 
  
    buf = String.new
@@ -169,7 +163,7 @@ def build_codes( files, dir:, outdir: )
       buf << "</td>\n"
       buf << "<td>"
       buf <<   years.keys.sort.reverse.map do |year|
-                           "<a href=\"#{years[year][:path]}\" title=\"#{years[year][:title]}\">#{year}</a>"
+                           "<a href=\"#{years[year].html_path}\" title=\"#{years[year].title}\">#{year}</a>"
                          end.join( ', ' )
       buf << "</td>\n"
       buf << "</tr>\n\n"
@@ -177,14 +171,14 @@ def build_codes( files, dir:, outdir: )
    buf << "</table>\n"
  
 
-   banner = build_site_banner
+   banner = build_site_banner()
    title = "Codes Index A-Z"
    body =  "<h1>#{title}</h1>\n\n" + buf
  
-   page = build_layout( title: title, body: body,
+   html = build_layout( title: title, body: body,
                           banner: banner )
 
-   write_text( "#{outdir}/codes.html", page )
+   write_text( "#{outdir}/codes.html", html )
    
-   page
+   html
 end

@@ -22,14 +22,14 @@ end
 
 
 ## rename to build_page_banner - why? why not?
-def build_banner( dirname:, basename: )
+def build_banner( page: )
 
 
-rsssf_url  = "https://rsssf.org/#{dirname}/#{basename}.html"
+rsssf_url  = "https://rsssf.org/#{page.dirname}/#{page.basename}.html"
 
-edit_url = "https://github.com/rsssf/tables/blob/master/#{dirname}/#{basename}.txt"
+edit_url = "https://github.com/rsssf/tables/blob/master/#{page.dirname}/#{page.basename}.txt"
 
-txt_url  = "https://github.com/rsssf/tables/raw/refs/heads/master/#{dirname}/#{basename}.txt"
+txt_url  = "https://github.com/rsssf/tables/raw/refs/heads/master/#{page.dirname}/#{page.basename}.txt"
 
 
 ## note - banner is its own pre block

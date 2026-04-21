@@ -79,15 +79,12 @@ end
 
 
 
-def build_page( txt, file: )
+def build_page( page )
 
-##
-##  clean-up windows-style newlines - why? why not?
-    txt = txt.gsub( "\r\n", "\n" )
-
+    txt   = page.txt
     
-    title = find_title_in_comment( txt ) || 'n/a'
-
+    title = page.title
+    
 
    toc = build_toc( txt, min: 2 )
 
@@ -140,22 +137,22 @@ def build_page( txt, file: )
         ### note - auto-patch page href for "flattened" space
         ##            e.g. dirs /tables & /tables[a-z] removed
         ##       
-               page = m[:page]
-               page = page.sub( %r{^\.\./tables[a-z]?/}, '' )
-               page = page.sub( %r{^\.\./}, '' )
+               pageref = m[:page]
+               pageref = pageref.sub( %r{^\.\./tables[a-z]?/}, '' )
+               pageref = pageref.sub( %r{^\.\./}, '' )
 
                ##
                ## 
                ##  2023uefanl.html#lga
                ##   remove .html  and replace # with §
-               page = page.sub( %r{\.html\b}i, '' )
-               page = page.sub( '#', '§' )
+               pageref = pageref.sub( %r{\.html\b}i, '' )
+               pageref = pageref.sub( '#', '§' )
     
                ## todo/fix - report external links (if any)
                ##              that is, outside of  rsssf.org
 
 
-                "see page <a href=\"#{page}.html\">#{page}</a>"        
+                "see page <a href=\"#{pageref}.html\">#{pageref}</a>"
             end
 
 
@@ -175,10 +172,8 @@ def build_page( txt, file: )
 
 
 
-   dirname   = File.dirname( file )
-   basename  = File.basename( file, File.extname( file ))
-
-   banner = build_banner( dirname: dirname, basename: basename )
+ 
+   banner = build_banner( page: page )
 
 
 body = String.new
@@ -191,11 +186,11 @@ body   += "</pre>\n"
 
 
   ## change body to content - why? why not?
-   page = build_layout( title: title, 
+   html = build_layout( title: title, 
                         body: body,
                         banner: banner )
                        
 
-   page
+   html
 end
 
