@@ -87,7 +87,16 @@ def _find_links( html,
                               anchors << page_url.fragment
                           else
                                puts "   internal page  #{href}  =>  #{page_url.path}"     if verbose
-                              pages << page_url.path
+
+                               ## note - for internal pages
+                               ##  for now no SUPPORT for query
+                               ##    e.g. foo=1&bar=2
+                               if page_url.query
+                                   ## change to ValueError or such - why? why not?
+                                   raise ArgumentError, "query in internal page links not yet supported, sorry - got #{page_url}"
+                               end
+
+                               pages << page_url.path
                           end
                       else
                          puts "!! external  #{href}  =>  #{page_url}"      if verbose

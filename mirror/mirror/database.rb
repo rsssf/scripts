@@ -30,7 +30,12 @@ class Page <  ActiveRecord::Base
    def self.cached()  where( cached: true ); end
    ## find a better name for not cached? why? why not?
    def self.missing()  where( cached: false ); end
+
+
+    ### note - path incl. leading slash e.g. /curtour.html
+    def url()  "#{BASE_URL}#{path}"; end
 end # class Page
+
 
 
 class Link <  ActiveRecord::Base  # ApplicationRecord
@@ -93,6 +98,37 @@ end # module MirrorDb
 
 
 module MirrorDb
+
+=begin
+    def self.open_readonly( path='./mirror.db' )
+
+       ### raise ArgumentError, "sqlite db #{path} not found"  if !File.exist?( path )
+
+
+      config = {
+          adapter:  'sqlite3',
+          database: path,
+          readonly: true,   ## try readonly prop!!!
+      }
+
+      ActiveRecord::Base.establish_connection( config )
+      # ActiveRecord::Base.logger = Logger.new( STDOUT )
+
+        ## try to speed up sqlite
+        ##   see http://www.sqlite.org/pragma.html
+        con = ActiveRecord::Base.connection
+
+        ## add for read-only - why? why not?
+       # con.execute( 'PRAGMA query_only=ON;' )
+
+       # con.execute( 'PRAGMA synchronous=OFF;' )
+       # con.execute( 'PRAGMA journal_mode=OFF;' )
+       # con.execute( 'PRAGMA temp_store=MEMORY;' )
+    end
+=end
+
+
+
     def self.open( path='./mirror.db' )
 
       ### reuse connect here !!!

@@ -25,7 +25,7 @@ BASE_URL = 'https://rsssf.org'
 
 
 
-require_relative 'mirror/links'  ## find_links helper 'n' more
+require_relative 'mirror/find_links'  ## find_links helper 'n' more
 require_relative 'mirror/mirror'
 require_relative 'mirror/download'
 
@@ -43,6 +43,12 @@ def log( msg )
 end
 
 
+
+## or use PAGES_NOT_FOUND ??
+PAGES_404 = [
+  '/tablesn/nedantcup09.html',
+  '/tablesz/zimb2022.html',
+]
 
 
 
@@ -70,15 +76,40 @@ TXT
 pp configs
 
 
+
+MirrorDb.open
+
+
+=begin
 configs.each do |config|
-    mirror_page( config )
+
+     page = Page.new( path:     config['page'],
+                      encoding: config['encoding'] )
+
+     mirror_page( page )
+end
+=end
+
+
+
+
+## start off with pages not cached
+page_recs =  MirrorDb::Model::Page.where( cached: false ).limit( 100 )
+
+page_recs.each do |page_rec|
+    next if PAGES_404.include?( page_rec.path )
+
+    page = Page.new( path:     page_rec.path,
+                      encoding: page_rec.encoding)
+
+
+    mirror_page( page )
 end
 
 
 puts "bye"
 
-end
-
+end     ## if __FILE__ == $0
 
 
 
