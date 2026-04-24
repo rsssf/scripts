@@ -1,21 +1,46 @@
 
-require 'cocos'
-require 'active_record'   ## todo: add sqlite3? etc.
-
-
-
 ##
-# use a sqlite database for caching pages and (internal) links
-##
-## use via activerecord
+# note - use a sqlite database for caching pages and (internal) links
+##            use via activerecord machinery / object-relational mapper
 
 
 module MirrorDb
 module Model
 
-class Page <  ActiveRecord::Base  # ApplicationRecord
-   self.table_name = 'pages'
+class Page <  ActiveRecord::Base
+   has_many  :outgoing_links,  class_name: 'Link',
+                               foreign_key: 'from_page_id'
+
+   ## use outgoing_pages or linked_pages?
+   has_many  :linked_pages,  :through => :outgoing_links,
+                             :source  => :to_page
+
+   ## backlink (incoming)
+   has_many  :incoming_links, class_name: 'Link',
+                              foreign_key: 'to_page_id'
+   ##  use incoming_pages or backlink_pages?
+   has_many  :backlink_pages, :through => :incoming_links,
+                              :source  => :from_page
+
+
+   def outgoing_paths() linked_pages.pluck(:path); end
+   def incoming_paths() backlink_pages.pluck(:path); end
+
+
+   def self.cached()  where( cached: true ); end
+   ## find a better name for not cached? why? why not?
+   def self.missing()  where( cached: false ); end
 end # class Page
+
+
+class Link <  ActiveRecord::Base  # ApplicationRecord
+   ## self.table_name = 'links'
+   belongs_to  :from_page, class_name: 'Page',
+                           foreign_key: 'from_page_id'
+   belongs_to  :to_page,   class_name: 'Page',
+                           foreign_key: 'to_page_id'
+end # class Link
+
 
 end   # module Model
 end
@@ -32,10 +57,13 @@ def up
 create_table :pages do |t|
    t.string :path, null: false
 
+   ##  split/break up path
+   ## add basename, dirname, extname  - why? why not?
+
    t.string :encoding
    t.string :title
 
-   ## or use download or date or such??
+   ## or use download or date (fetched) or such??
    t.boolean :cached,   default: false
 
   # t.timestamps  ## (auto)add - why? why not?
@@ -49,9 +77,9 @@ create_table :links, id: false do |t|
    t.integer  :from_page_id,  null: false
    t.integer  :to_page_id,    null: false
 end
-add_index :pages, [:from_page_id,:to_page_id], unique: true
-add_index :pages, :from_page_id
-add_index :pages, :to__page_id
+add_index :links, [:from_page_id, :to_page_id], unique: true
+add_index :links, :from_page_id
+add_index :links, :to_page_id
 
 ##
 ## add errors or log or such - why? why not?
@@ -60,9 +88,6 @@ add_index :pages, :to__page_id
 end # method up
 end # class CreateDb
 end # module MirrorDb
-
-
-
 
 
 
@@ -95,30 +120,3 @@ module MirrorDb
       end
     end  # method open
 end
-
-
-
-
-
-
-MirrorDb.open
-
-
-
-puts "bye"
-
-
-__END__
-
--- create_table(:pages)
-   -> 0.0025s
--- add_index(:pages, :path, {:unique=>true})
-   -> 0.0005s
--- create_table(:links, {:id=>false})
-   -> 0.0004s
--- add_index(:pages, [:from_page_id, :to_page_id], {:unique=>true})
-   -> 0.0003s
--- add_index(:pages, :from_page_id)
-   -> 0.0003s
--- add_index(:pages, :to__page_id)
-   -> 0.0002s

@@ -10,9 +10,9 @@ $LOAD_PATH.unshift( '/sports/rubycocos/webclient/webget/lib' )
 
 require 'cocos'
 require 'webget'           ## incl. webget, webcache, webclient, etc.
-
-
 require 'nokogiri'
+
+require 'active_record'   ## todo: add sqlite3? etc.
 
 
 Webcache.root = './cache'
@@ -29,6 +29,7 @@ require_relative 'mirror/links'  ## find_links helper 'n' more
 require_relative 'mirror/mirror'
 require_relative 'mirror/download'
 
+require_relative 'mirror/database'
 
 
 ## auto log errors  (append to logs.txt)
@@ -45,6 +46,10 @@ end
 
 
 
+
+
+
+if __FILE__ == $0
 
 configs = parse_csv( <<TXT )
 
@@ -67,18 +72,14 @@ pp configs
 
 configs.each do |config|
     mirror_page( config )
-
-
-=begin
-    if BAD_URLS.size > 0
-        puts "!! #{BAD_URLS.size} BAD URL(S):"
-        pp BAD_URLS
-    end
-=end
 end
 
 
 puts "bye"
+
+end
+
+
 
 
 
@@ -95,43 +96,3 @@ puts uri.port      # 8080
 puts uri.path      # "/path/page.html"
 puts uri.query     # "foo=1&bar=2"
 puts uri.fragment  # "section-3"
-
-
- 37 link(s) found:
-["#bund",
- "#cup",
- "#reg",
- "#play",
- "#champ",
- "#champ",
- "#champ",
- "#champ",
- "#champ",
- "#champ",
- "#releg",
- "#releg",
- "#releg",
- "#releg",
- "#releg",
- "#releg",
- "#champ",
- "#champ",
- "#champ",
- "#champ",
- "#champ",
- "#champ",
- "#releg",
- "#releg",
- "#releg",
- "#releg",
- "#releg",
- "#releg",
- "#champ",
- "#releg",
- "oost2025.html",
- "oosthist.html",
- "oostchamp.html",
- "oostcuphist.html",
- "oostsupcuphist.html",
- "oostfound.html",
- "../nersssf.html"]
