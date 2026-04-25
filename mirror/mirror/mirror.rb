@@ -2,25 +2,61 @@
 ## use recursive_download_page or such - why? why not?
 ##   or add recursive flag
 
+=begin
+visited: 100 (downloaded: 98) -  35586 page(s) indexed (9158 cached, 26428 missing)
+    [98/26526 -  0.00%]  2:14 mins -  1.38 secs/page, estimate: 608:53 mins
+=end
+
+def fmt_time_diff( time_start, time_end=Time.now, count:, step: nil )
+   time_diff  = time_end - time_start
+   buf = String.new
+
+    if step
+       buf +=  "  [#{step}/#{count} - %5.2f%%]" % [step*100/count]
+
+       buf +=  "  %d:%02d mins" % [time_diff/60, time_diff%60]
+       buf +=  " - %5.2f secs/page" % [time_diff/step]
+
+       time_estimate = (time_diff/step) * count
+       buf +=  ", estimate: %d:%02d mins" % [time_estimate/60, time_estimate%60]
+    else
+      buf +=  "  %d:%02d mins" % [time_diff/60, time_diff%60]
+      buf +=  " - %5.2f secs/page  (#{count} pages)" % [time_diff/count]
+   end
+
+   buf
+end
+
 
 
 ##
 ##  use limit for batch - why? why not?
 ##     start of / try a batch of a hundred
 def mirror_pages( force: false,
-                  batch: 100 )
+                  batch: 1000 )
 
-    visited = 0
+    visited    = 0
+    downloaded = 0
+
+    time_start = Time.now
 
     loop do
       ## todo - add
        ##       prefer pages
        ##  starting with /tables,/tables[a-z]/
        ##    - add to select
+       ## prefer pages
+       ##    starting with /tables,/tables[a-z]/
+       ##
+       ##   queue.keys.find do |key|
+       ##                       %{\A/tables[a-z]?/}.match?(key)
+       ##                 end
+
 
       page_recs =  MirrorDb::Model::Page.where( cached: false ).limit( batch )
 
-      break   if visited == batch || page_recs.size == 0
+      ## break   if visited == batch || page_recs.size == 0
+      break   if page_recs.size == 0
 
 
 
@@ -34,6 +70,15 @@ def mirror_pages( force: false,
             next
          end
 
+         ### special case for non .html pages (e.g. .pdf others too??)
+         ##    do NOT download / mirror / cache for now
+         if File.extname( page_rec.path ) != '.html'
+            page_rec.update!( cached: true )   if page_rec.not_cached?
+            next
+         end
+
+
+
          ## note - on download (not if cached)
          ##        encoding
          ##           might be get changed
@@ -45,9 +90,17 @@ def mirror_pages( force: false,
 
          ##  if response meta data present than fresh download (not cached)
          cached  = response_meta ? false : true
+
+         if response_meta
+             downloaded += 1
+             puts " ---  " + fmt_time_diff( time_start,  count: downloaded )
+         end
+
+
          ## turn on verbose mode only if page downloaded (not on cache hit)
          verbose = cached ? false : true
          ## verbose = true
+
 
           html = errata( html, url: page_rec.url  )
 
@@ -76,6 +129,11 @@ def mirror_pages( force: false,
                internal_rec = MirrorDb::Model::Page.find_or_create_by!(
                                                             path: path ) do |rec|
                                     puts "     add linked page #{rec.path}"
+
+                                    rec.basename = File.basename( rec.path, File.extname( rec.path ))
+                                    rec.extname  = File.extname( rec.path )
+                                    rec.dirname  = File.dirname( rec.path )
+
                                     rec.encoding = PAGES_ENCODING[ rec.path ]
                                     rec.cached   = false
                                  end
@@ -87,7 +145,7 @@ def mirror_pages( force: false,
                                                          to_page_id:   internal_rec.id )
             end
 
-            puts "  [#{i+1}/#{page_recs.size}] update page #{page_rec.path} w/ #{internals.size} page(s) linked - >#{title || n/a}<"
+            puts "  [#{i+1}/#{page_recs.size}] update page #{page_rec.path} w/ #{internals.size} page(s) linked - >#{title || 'n/a'}<"
 
 
             attribs = {
@@ -111,15 +169,22 @@ def mirror_pages( force: false,
             visited += 1
 
            if visited % 100 == 0
-              puts "\n visited: #{visited} - " +
+              puts "\n visited: #{visited} (downloaded: #{downloaded}) - " +
                  " #{MirrorDb::Model::Page.count} page(s) indexed " +
                  "(#{MirrorDb::Model::Page.cached.count} cached, " +
                  "#{MirrorDb::Model::Page.not_cached.count} missing)"
+
+             puts "  " + fmt_time_diff( time_start,  step: downloaded,
+                                                      count: downloaded+MirrorDb::Model::Page.not_cached.count )
+
+
            end
        end
     end
 
-            puts "\n visited: #{visited} - " +
+
+
+            puts "\n visited: #{visited} (downloaded: #{downloaded}) - " +
                  " #{MirrorDb::Model::Page.count} page(s) indexed " +
                  "(#{MirrorDb::Model::Page.cached.count} cached, " +
                  "#{MirrorDb::Model::Page.not_cached.count} missing)"

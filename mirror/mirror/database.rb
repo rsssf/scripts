@@ -65,11 +65,22 @@ def up
 create_table :pages do |t|
    t.string :path, null: false
 
-   ##  split/break up path
+   ##  split/break up path  - maybe make it later virtual columns - why? why not?
    ## add basename, dirname, extname  - why? why not?
+   t.string :basename, null: false
+   t.string :dirname,  null: false
+   t.string :extname,  null: false    ##  note - empty string if no extname?
+                                      ##    if present starts with dot (.) e.g.
+                                      ##          .html, .pdf, etc.
+                                      ##   keep dot why? why not?
 
-   t.string :encoding
+
+   t.string :encoding           ## "upstream" text encoding - all pages converted to utf-8 ALWAYS
    t.string :title
+
+   t.string  :http_content_type     ## http content-type   header
+   t.integer :http_content_length   ## http content-length header
+   t.integer :http_status           ## e.g. 200, 404  - make mandatory - why? why not?
 
    ## or use download or date (fetched) or such??
    t.boolean :cached,   default: false

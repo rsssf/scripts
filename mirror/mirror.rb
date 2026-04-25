@@ -57,6 +57,8 @@ PAGES_404 = [
   '/tablesj/jord2010.html',
   '/tablesv/vanuatu.html',
   '/tablesk/can08.html',
+  '/tablesk/can07.html',
+  '/tablesg/greenl07.html',
 ]
 
 
@@ -128,6 +130,10 @@ configs.each do |config|
 
       page_rec = MirrorDb::Model::Page.find_or_create_by!( path: path ) do |rec|
                       puts "  add page #{rec.path} (cached: false) to mirror.db"
+
+                      rec.basename = File.basename( rec.path, File.extname( rec.path ))
+                      rec.extname  = File.extname( rec.path )
+                      rec.dirname  = File.dirname( rec.path )
 
                       rec.encoding = encoding
                       rec.cached   = false

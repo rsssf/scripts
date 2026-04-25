@@ -76,3 +76,15 @@ if encoding == 'windows-1252'
              exit 1
            end
         end
+
+or
+
+
+<head/><pre>
+Austria, OeFB ("Magnofit") Cup 1996/97
+  ...
+<p>
+Last updated: 28 May 1997
+
+</pre>
+  in https://rsssf.org/tableso/oostcup97.html
