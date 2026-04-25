@@ -23,13 +23,15 @@ Webget.config.delay_in_s = 1
 BASE_URL = 'https://rsssf.org'
 
 
+require_relative 'mirror/database'
 
 
 require_relative 'mirror/find_links'  ## find_links helper 'n' more
-require_relative 'mirror/mirror'
-require_relative 'mirror/download'
+require_relative 'mirror/download_page'
+require_relative 'mirror/errata'     ## known typos & fixes
 
-require_relative 'mirror/database'
+### commands
+require_relative 'mirror/mirror'
 
 
 ## auto log errors  (append to logs.txt)
@@ -45,10 +47,25 @@ end
 
 
 ## or use PAGES_NOT_FOUND ??
+## GET https://rsssf.org/tablesm/mayotte2010.html...
+## !! HTTP ERROR - 404 Not Found:
+
 PAGES_404 = [
   '/tablesn/nedantcup09.html',
   '/tablesz/zimb2022.html',
+  '/tablesm/mayotte2010.html',
+  '/tablesj/jord2010.html',
+  '/tablesv/vanuatu.html',
+  '/tablesk/can08.html',
 ]
+
+
+##
+##
+##  defaults to windows-1252  if
+###  lookup by path e.g. /curtour.html
+
+PAGES_ENCODING = Hash.new { |h,key| h[key] = 'windows-1252'  }
 
 
 
@@ -68,8 +85,7 @@ page, encoding
 ## /curtour.html
 
 /tableso/oost2026.html
-
-## /tablesi/ital2015.html
+/tablesi/ital2015.html
 
 TXT
 
@@ -77,34 +93,49 @@ pp configs
 
 
 
-MirrorDb.open
+def add_encodings( configs )
+  configs.each do |config|
+## todo / double check fix read_csv upstream
+##    if   empty column has comment it is "" empty string otherwise
+##                it is nil!!!  ??
+        if config['encoding'].nil? || config['encoding'].empty?
+            ## do nothing; use default (that is, windows-1252)
+        else
+           PAGES_ENCODING[config['page']] = config['encoding']
+        end
+  end
+end
 
 
-=begin
+
+
+
+
+##
+##  add/populate (known) encodings
+## add_encodings( configs )
+
+
+## MirrorDb.open( './mirror-test.db'  )
+MirrorDb.open( './mirror.db'  )
+
+
+## add seed/start pages
 configs.each do |config|
+      path     = config['page']
+      encoding = config['encoding']
+      encoding = 'windows-1252'      if config['encoding'].nil? || config['encoding'].empty?
 
-     page = Page.new( path:     config['page'],
-                      encoding: config['encoding'] )
+      page_rec = MirrorDb::Model::Page.find_or_create_by!( path: path ) do |rec|
+                      puts "  add page #{rec.path} (cached: false) to mirror.db"
 
-     mirror_page( page )
+                      rec.encoding = encoding
+                      rec.cached   = false
+                end
+      pp page_rec
 end
-=end
 
-
-
-
-## start off with pages not cached
-page_recs =  MirrorDb::Model::Page.where( cached: false ).limit( 100 )
-
-page_recs.each do |page_rec|
-    next if PAGES_404.include?( page_rec.path )
-
-    page = Page.new( path:     page_rec.path,
-                      encoding: page_rec.encoding)
-
-
-    mirror_page( page )
-end
+mirror_pages()
 
 
 puts "bye"

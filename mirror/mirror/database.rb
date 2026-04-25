@@ -27,11 +27,14 @@ class Page <  ActiveRecord::Base
    def incoming_paths() backlink_pages.pluck(:path); end
 
 
-   def self.cached()  where( cached: true ); end
+   def self.cached()      where( cached: true ); end
    ## find a better name for not cached? why? why not?
-   def self.missing()  where( cached: false ); end
+   def self.not_cached()  where( cached: false ); end
+   ## def self.missing()  where( cached: false ); end
 
 
+
+    def not_cached?()  !cached?(); end
     ### note - path incl. leading slash e.g. /curtour.html
     def url()  "#{BASE_URL}#{path}"; end
 end # class Page

@@ -4,38 +4,13 @@
 ## get all links
 ##   ignore anchor links and
 ##     split into internal and external
-def _find_links( html,
+def _find_links( doc,
                  url:,
                  verbose: true )
 
 
        base_url = URI( url )
 
-
-### move to errata  (_html) or such
-       if base_url.path == '/results-afr.html'
-            ## add missing closing quote
-           html = html.sub( %q{<A HREF="tablesm/mauri2023.html#aga>},
-                            %q{<A HREF="tablesm/mauri2023.html#aga">}  )
-
-           html = html.sub( %q{<A HREF=" tablesr rodri2025.html#super">},
-                            %q{<A HREF="tablesr/rodri2025.html#super">} )
-       end
-
-       if base_url.path == '/profiles.html'
-           html = html.sub( %q{<A HREF=http://www.daleucampeon.4t.com">},
-                            %q{<A HREF="http://www.daleucampeon.4t.com">} )
-       end
-
-
-## Standard HTML4-style parsing (default)
-## doc = Nokogiri::HTML(malformed_html)
-
-## More robust HTML5 parsing
-##doc = Nokogiri::HTML5(malformed_html)
-
-
-      doc = Nokogiri::HTML( html )
 
     ##
     ## note: Array#compact removes all nil values from an array.

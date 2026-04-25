@@ -1,9 +1,5 @@
 
 
-TITLE_RE = %r{
-    <TITLE>(?<text>.*?)</TITLE>
-}ixm
-
 
 def _download_page( url, encoding:,
                          force: )
@@ -11,13 +7,12 @@ def _download_page( url, encoding:,
 
   ## check if not in cache
   ##   note - use force == true  to always (force) download
-    html = nil
 
 
     if Webcache.cached?( url ) && force == false
         puts "   CACHE HIT - #{url}"
         html = Webcache.read( url )
-        [html, true]
+        [html, nil]
     else
         puts "==> download #{url} (encoding: #{encoding})..."
 
@@ -33,20 +28,42 @@ def _download_page( url, encoding:,
     puts "html:"
     html =  response.text( encoding: encoding )
     pp html[0..200]
-    html
+
+     ## note - use "hacky" undocument internal response._text_encoding
+     ##                   to get "upstream" encoding used from convert to utf-8
+     ##                         unicode boms may override user supplied encoding!!!
+     ##  or change upstream
+     ##   and    use/add response.text_with_encoding( ) - why? why not?
+
+      meta = {
+          encoding:        response._text_encoding,
+          content_length:  response.content_length,
+          content_type:    response.content_type,
+      }
+
+        [html,meta]
+    end
+
+end
 
 
-=begin
+__END__
+
+TITLE_RE = %r{
+    <TITLE>(?<text>.*?)</TITLE>
+}ixm
+
+
+
 https://rsssf.org/miscellaneous/ec-qual.html
 
-min - page with no title   uses <head/> !!!
+minimal page with no title   uses <head/> !!!
 e.g
 <html>
 <head/><pre>
 Contributed by ...
 </pre>
 </html>
-
 
 
 if encoding == 'windows-1252'
@@ -59,11 +76,3 @@ if encoding == 'windows-1252'
              exit 1
            end
         end
-=end
-
-
-
-        [html,false]
-    end
-
-end
