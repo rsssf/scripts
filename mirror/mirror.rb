@@ -31,6 +31,7 @@ require_relative 'mirror/download_page'
 require_relative 'mirror/errata'     ## known typos & fixes
 
 ### commands
+require_relative 'mirror/list'
 require_relative 'mirror/mirror'
 
 
@@ -84,8 +85,11 @@ configs = parse_csv( <<TXT )
 
 page, encoding
 
-## /curdom.html
-## /curtour.html
+/curdom.html
+/curtour.html
+/histdom.html
+/intclub.html
+/intland.html
 
 /tableso/oost2026.html
 /tablesi/ital2015.html

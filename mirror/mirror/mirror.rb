@@ -52,8 +52,31 @@ def mirror_pages( force: false,
        ##                       %{\A/tables[a-z]?/}.match?(key)
        ##                 end
 
+       ##   prioritize main pages
+       ##     fix - pass in via seed / use seed !!!
+       ## /curdom.html
+       ## /curtour.html
+       ## /histdom.html
+       ## /intclub.html
+       ## /intland.html
 
-      page_recs =  MirrorDb::Model::Page.where( cached: false ).limit( batch )
+      page_recs =  MirrorDb::Model::Page.where( cached: false,
+                                                path: ['/curdom.html',
+                                                       '/curtour.html',
+                                                        '/histdom.html',
+                                                        '/intclub.html',
+                                                        '/intland.html']
+                                               ).limit( batch )
+
+      if page_recs.size == 0
+        page_recs =  MirrorDb::Model::Page.where( cached: false ).
+                                           where( 'path LIKE ?', '/table%' ).limit( batch )
+      end
+
+      if page_recs.size == 0   ## retry if nothing found matching /table*
+        page_recs =  MirrorDb::Model::Page.where( cached: false ).limit( batch )
+      end
+
 
       ## break   if visited == batch || page_recs.size == 0
       break   if page_recs.size == 0
