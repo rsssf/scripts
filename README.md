@@ -16,42 +16,17 @@ and build-up a local (sqlite) `mirror.db` (about 20 MB)
 with the link structure (ingoing and outgoing) & titles
 using a `pages` and `links` table.
 
-> [!NOTE]
-> with a one second delay between downloads
-> you can expect a run of 40 000 times 2 seconds,
-> that is, about 22 hours.
+for more, see [/mirror »](mirror)
 
 
-```
-$ ruby mirror/mirror.rb
-```
-
-note - the web pages get (by default) cached in `./cache`
-
-
-
-> [!TIP]
->
->  Use the `report` command in the `mirror` tool to generate a page &
->   diretory statistics summary. Example:
->
->      $ ruby mirror/report.rb
->
->  resulting in [`mirror/SUMMARY.md`](mirror/SUMMARY.md).
->
->
->  Or use the `export` command to export all pages to datasets
->  in the comma-separated values (.csv) format. Example:
->
->      $ ruby mirror/export.rb
->
->  resulting in `pages_html.csv`, `pages_html_404.csv`, `pages_pdf.csv`,
->  `pages_other.csv` in the `tmp-mirror/` directory.
 
 
 
 
 **prepare**
+
+use `prepare` to download (if not cached or forced)
+and convert tables (in .html to .txt)
 
 ```
 Usage: prepare/prepare.rb [options] <config slug>
@@ -60,17 +35,11 @@ Usage: prepare/prepare.rb [options] <config slug>
         --offline, --cached          no downloads; always use cached version (default: false)
 ```
 
-
-use `prepare` to download (if not cached or forced)
-and convert tables (in .html to .txt)
-
 pass in a pages config (e.g.
 [eng](config/eng.csv),
 [de](config/de.csv),
 [worldcup](config/worldcup.csv), etc.)  with a list of table files
 in a comma-separated values (csv) file.
-
-
 
 ```
 $ ruby prepare/prepare.rb eng
@@ -116,15 +85,18 @@ the outname defaults to `<slug>-stats.csv`, that is, `eng`  becomes `eng-stats.c
 
 
 
+
 **fmtfix**
+
+use `fmtfix` to convert .txt tables (original format only in .txt)
+to .txt pages (applied "autofixes" for football.txt parsing)
+
 
 ```
 Usage: fmtfix/fmtfix.rb [options] <.txt files> or <config slugs>
     -u, --update                     turn on update; write to production repo (default: false)
 ```
 
-use `fmtfix` to convert .txt tables (original format only in .txt)
-to .txt pages (applied "autofixes" for football.txt parsing)
 
 pass in (i) individual table files e.g
 [eng2010.txt](https://github.com/rsssf/tables/blob/master/tablese/eng2010.txt) or
@@ -148,6 +120,5 @@ note - the outdir for pages config default to `./tmp-<slug>` e.g. `eng` becomes 
 
 tip: see <https://github.com/rsssf/clubs>,
 <https://github.com/rsssf/world>,
-<https://github.com/rsssf/worldcup>,
 for public online copies / mirrors for .txt pages with applied "autofixes"
 for football.txt parsing  (look inside the /pages directories).

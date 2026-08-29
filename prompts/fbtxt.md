@@ -1,6 +1,6 @@
 via chatgpt
 
-a follow-up from <mirror2.md>
+a follow-up from <mirror-openai.md>
 
 ## q: can you design a human (but parseable) football plain text format from scratch learning from the rsssf quirks and best and worst practices?
 

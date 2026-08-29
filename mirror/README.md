@@ -1,91 +1,51 @@
-# RSSSF Mirror
+# RSSSF Mirror How-To
 
 
-The directory structure of the (mirrored) rsssf.org website
-(about 40 000+ .html pages):
+use `mirror` to mirror
+the complete rsssf.org website
+(about 40 000+ .html pages - about 800 MB)
+by following (and recording) all internal links.
+the command will download (and cache all .html pages
+converted to utf-8)
+and build-up a local (sqlite) `mirror.db` (about 20 MB)
+with the link structure (ingoing and outgoing) & titles
+using a `pages` and `links` table.
+
+> [!NOTE]
+> with a one second delay between downloads
+> you can expect a run of 40 000 times 2 seconds,
+> that is, about 22 hours.
+
 
 ```
-└───rsssf.org                => 66
-    ├───bvv                  => 221
-    ├───colours              => 220
-    ├───ec                   => 190
-    ├───engpaul
-    │   └───FLA              => 111
-    ├───intldetails          => 214
-    ├───miscellaneous        => 6053
-    ├───nedfer               => 27
-    ├───players              => 1943
-    ├───rssbest              => 218
-    ├───sacups               => 345
-    ├───tables               => 580
-    ├───tablesa              => 3053
-    ├───tablesb              => 1887
-    ├───tablesc              => 2333
-    ├───tablesd              => 1174
-    │   └───dfbcup           => 8
-    ├───tablese              => 1407
-    ├───tablesf              => 1092
-    ├───tablesg              => 1378
-    ├───tablesh              => 633
-    ├───tablesi              => 1556
-    ├───tablesj              => 516
-    ├───tablesk              => 951
-    ├───tablesl              => 841
-    ├───tablesm              => 2206
-    ├───tablesn              => 1645
-    ├───tableso              => 889
-    ├───tablesp              => 1412
-    ├───tablesq              => 92
-    ├───tablesr              => 894
-    ├───tabless              => 2988
-    ├───tablest              => 1399
-    ├───tablesu              => 767
-    ├───tablesv              => 420
-    ├───tablesw              => 747
-    ├───tablesx              => 22
-    ├───tablesy              => 71
-    ├───tablesz              => 849
-    ├───usadave              => 56
-    └───wk94                 => 14
+$ ruby mirror/mirror.rb
 ```
 
-There are the a-z (26) `/tables[a-z]` plus the `/tables`
-"core" directories
-plus about a dozen extras directories:
-
-```
-└───rsssf.org    (with /tables* hidden)
-    ├───bvv
-    ├───colours
-    ├───ec
-    ├───engpaul
-    │   └───FLA
-    ├───intldetails
-    ├───miscellaneous
-    ├───nedfer
-    ├───players
-    ├───rssbest
-    ├───sacups
-    ├───usadave
-    └───wk94
-```
+note - the web pages get (by default) cached in `./cache`
 
 
 
 
-report number of indexed pages:
-
-by type:
-- .html
-- .pdf
-- spreadsheets (.xlsd?)
-- images (.jpg)  - incl. scanned documents as images
-
-by (charset) encoding  (only incl. .html):
-- windows-1256?
-- utf-8
-- utf-16le
-- ...
 
 
-report broken links - 404 page not found:
+
+
+
+
+> [!TIP]
+>
+>  Use the `report` command in the `mirror` tool to generate a page &
+>   diretory statistics summary. Example:
+>
+>      $ ruby mirror/report.rb
+>
+>  resulting in [`mirror/SUMMARY.md`](mirror/SUMMARY.md).
+>
+>
+>  Or use the `export` command to export all pages to datasets
+>  in the comma-separated values (.csv) format. Example:
+>
+>      $ ruby mirror/export.rb
+>
+>  resulting in `pages_html.csv`, `pages_html_404.csv`, `pages_pdf.csv`,
+>  `pages_other.csv` in the `tmp-mirror/` directory.
