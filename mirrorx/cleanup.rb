@@ -1,11 +1,10 @@
-
 ###
 #  to run use:
 #
-#   $ ruby mirror/query_enc.rb
+#   $ ruby mirrorx/cleanup.rb
 
 
-require_relative 'mirror'
+require_relative 'helper'
 
 
 MirrorDb.open

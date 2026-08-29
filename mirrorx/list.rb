@@ -1,11 +1,10 @@
-
 ###
 #  to run use:
 #
-#   $ ruby mirror/list.rb
+#   $ ruby mirrorx/list.rb
 
 
-require_relative 'mirror'
+require_relative 'helper'
 
 
 MirrorDb.open

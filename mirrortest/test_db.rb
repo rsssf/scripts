@@ -1,10 +1,10 @@
 ###
 #  to run use:
 #
-#   $ ruby mirror/test_db.rb
+#   $ ruby mirrortest/test_db.rb
 
 
-require_relative 'mirror'
+require_relative 'helper'
 
 
 
