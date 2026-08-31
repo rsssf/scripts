@@ -1,5 +1,5 @@
 
-$LOAD_PATH.unshift( '/sports/rsssf/scripts/webget-mirror/lib' )
+$LOAD_PATH.unshift( '/sports/rubycocos/webclient/webget-mirror/lib' )
 require 'webget/mirror'
 
 
