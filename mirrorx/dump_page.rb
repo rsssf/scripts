@@ -28,7 +28,7 @@ def dump_page( page, links:     false,
    ## print linked pages
    if links
        page.linked_pages.each do |link|
-           print "                                              => #{link.path}  "
+           print "                                          (out)  => #{link.path}  "
            print "  >#{link.title}<"   if link.title
            print "\n"
        end
@@ -38,7 +38,7 @@ def dump_page( page, links:     false,
    ### print backlink pages
    if backlinks
        page.backlink_pages.each do |backlink|
-           print "                                              <= #{backlink.path}  "
+           print "                                        (back)  <= #{backlink.path}  "
            print "  >#{backlink.title}<"   if backlink.title
            print "\n"
        end
