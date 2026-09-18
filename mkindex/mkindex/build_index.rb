@@ -10,11 +10,11 @@ def build_index( site, outdir: )
      buf = String.new
 
      ## header with title
-     buf << "<title>"
-     buf  += "#{pages.size} page(s)"
+     buf  += "<h1>"
+     buf  += "#{dirname}"
+     buf  += " - #{pages.size} page(s)"
      buf  += " & #{subdirs.size} subdir(s)"   if subdirs.size > 0
-     buf  += " in #{dirname}"
-     buf << "</title>\n"
+     buf  += "</h1>\n"
 
 
      ## subdir section
@@ -23,11 +23,10 @@ def build_index( site, outdir: )
      folder = "\u{1F4C2}"
 
      if subdirs.size > 0
-        buf << "<div>"
-        buf  += "#{subdirs.size} subdir(s) in #{dirname}:"
-        buf  += "<br>"
-        buf  += "\n"
+        buf  += "<h2>#{subdirs.size} subdir(s) in #{dirname}"
+        buf  += "<h2>\n"
 
+        buf += "<div>"
         subdirs.each do |subdir|
             parentdir =   dirname == '/' ? dirname : dirname + '/'
             reldir = subdir.sub( parentdir, '' )
@@ -36,16 +35,15 @@ def build_index( site, outdir: )
           buf += "<br>"
           buf += "\n"
         end
-        buf << "</div>\n"
+        buf += "</div>\n"
      end
 
 
      ## pages section
-     buf << "<div>"
-     buf  += "#{pages.size} page(s) in #{dirname}:"
-     buf  += "<br>"
-     buf  += "\n"
+     buf  += "<h2>#{pages.size} page(s) in #{dirname}"
+     buf  += "<h2>\n"
 
+     buf += "<div>"
      pages.each_with_index do |page,i|
         buf <<  page.basename  + "   "
         buf <<  "\n"   if (i+1) % 12 == 0
