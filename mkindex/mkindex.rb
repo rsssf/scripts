@@ -1,6 +1,6 @@
 ############
 #  to run use:
-#   $ ruby mkindex/mkindex.rb
+#   $ ruby mkindex/mkindex.rb --outdir=./tmp-index --rootdir=/sports/rsssf/mirror/pages
 
 ##
 ###  generate index (mirror) web site
