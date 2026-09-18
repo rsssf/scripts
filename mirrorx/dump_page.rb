@@ -1,5 +1,6 @@
 
-def dump_page( page, backlinks: false )
+def dump_page( page, links:     false,
+                     backlinks: false )
    print "%-38s" % page.path
 
    if page.cached?
@@ -23,6 +24,16 @@ def dump_page( page, backlinks: false )
 
    print "  >#{page.title}<"   if page.title
    print "\n"
+
+   ## print linked pages
+   if links
+       page.linked_pages.each do |link|
+           print "                                              => #{link.path}  "
+           print "  >#{link.title}<"   if link.title
+           print "\n"
+       end
+   end
+
 
    ### print backlink pages
    if backlinks

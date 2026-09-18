@@ -7,7 +7,10 @@
 require_relative 'helper'
 
 
-MirrorDb.open
+dbpath = ARGV[0] || './mirror.db'
+MirrorDb.open( dbpath )
+
+
 
 
 puts " #{MirrorDb::Model::Page.count} page(s) " +

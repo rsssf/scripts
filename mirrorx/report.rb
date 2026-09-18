@@ -9,7 +9,7 @@
 require_relative 'helper'
 
 
-MirrorDb.open( './mirror2.db' )
+MirrorDb.open( './mirror.db' )
 
 
 buf = String.new
