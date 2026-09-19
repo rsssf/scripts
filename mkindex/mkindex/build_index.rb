@@ -9,12 +9,14 @@ def build_index( site, outdir: )
     subdirs = site.collect_subdirs( dirname )
      buf = String.new
 
+
+     title   =  "#{dirname}"
+     title  += " - #{pages.size} page(s)"
+     title  += ", #{subdirs.size} subdir(s)"   if subdirs.size > 0
+
+
      ## header with title
-     buf  += "<h1>"
-     buf  += "#{dirname}"
-     buf  += " - #{pages.size} page(s)"
-     buf  += " & #{subdirs.size} subdir(s)"   if subdirs.size > 0
-     buf  += "</h1>\n"
+     buf  += "<h1>#{title}</h1>\n"
 
 
      ## subdir section
@@ -51,9 +53,7 @@ def build_index( site, outdir: )
         buf += " "
         url = "https://rsssf.org" + page.path
         buf +=  %Q{<a href="#{url}">#{page.title}</a>}
-        buf += "  "
-
-        buf <<  "\n"   if (i+1) % 12 == 0
+        buf += "<br>\n"
      end
      buf << "\n</div>\n"
 
@@ -70,7 +70,15 @@ def build_index( site, outdir: )
 
      puts "writing to <#{outpath}>..."
 
-     write_text( outpath, buf )
+      body = buf
+      banner = build_banner( site: site )
+
+     html = build_layout( site: site,
+                          title: title,
+                          body: body,
+                          banner: banner )
+
+     write_text( outpath, html )
    end
 
 

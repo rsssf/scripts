@@ -12,6 +12,10 @@ require 'cocos'
 
 require_relative 'mkindex/build_site'
 require_relative 'mkindex/build_index'
+require_relative 'mkindex/build_style'
+
+require_relative 'mkindex/page_banner'
+require_relative 'mkindex/page_layout'
 
 
 
@@ -60,6 +64,9 @@ site = SiteIndex.build( files, dir: rootdir)
 
 
 build_index( site, outdir: outdir )
+
+build_style( outdir: outdir )
+
 
 
 puts "bye"

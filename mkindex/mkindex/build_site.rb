@@ -7,15 +7,21 @@
 class SiteIndex
 
 
-def self.build( files, dir: )
-   idx = self.new( dir: dir )
+def self.build( files, dir:,
+                       basepath: '/mirror' )
+   idx = self.new( dir:      dir,
+                   basepath: basepath )
    idx.add( files )
    idx
 end
 
 
-## use basedir - why? why not?
+## use basedir (or rootdir) - why? why not?
 attr_reader :dir
+
+## used for generation (path part of baseurl e.g. /mirror for
+##                                       rsssf.github.io/mirror)
+attr_reader :basepath
 
 
 
@@ -23,10 +29,13 @@ attr_reader :dirs
 
 
 
-def initialize( dir: )
+def initialize( dir:, basepath: )
     @dir = dir
     @dirs  = {}  ## indexed by dirname (as key)
+
+    @basepath = basepath
 end
+
 
 
 
