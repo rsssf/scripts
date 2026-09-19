@@ -1,8 +1,8 @@
 ###
 #  to run use:
 #
-#   $ ruby mirrorx/export_v2.rb
-
+#   $ ruby mirrorx/export_v2.rb --outdir=./tmp-mirror
+#   $ ruby mirrorx/export_v2.rb --outdir=/sports/rsssf/mirror/pages
 
 ##
 ##  note - output  html.csv index datasets/files per directory !!!
@@ -11,8 +11,20 @@
 require_relative 'helper'
 
 
-MirrorDb.open( './mirror2.db')
 
+## outdir = './tmp-mirror'
+## outdir = '/sports/rsssf/mirror/pages'
+outdir  = OPTS[:outdir]
+
+## dbpath = './mirror.db'
+dbpath =  OPTS[:dbpath]
+
+
+
+
+
+puts "==> opening >#{dbpath}<..."
+MirrorDb.open( dbpath )
 
 puts " #{MirrorDb::Model::Page.count} page(s) " +
          "(#{MirrorDb::Model::Page.cached.count} cached, " +
@@ -44,9 +56,19 @@ def build
                              '']
       elsif page.extname == '.html' || page.extname == '.htm'
           rows_dir  = rows_html[ page.dirname] ||= []
+
+          ## note - make page title -  (?) if not yet downloaded /cached !!
+          ##                   only use (-) if not available !!!
+         page_title =  if page.title
+                            page.title
+                        else
+                           ## or check for http_status - why? why not?
+                           page.cached  ?  '-' : '?'
+                        end
+
           rows_dir <<  [page.path,
                            "#{page.linked_pages.count}/#{page.backlink_pages.count}",
-                           page.title ? page.title : '-'
+                           page_title
                        ]
       elsif page.extname == '.pdf'
           rows_pdf << [page.path,
@@ -76,8 +98,7 @@ headers = ['path', 'links', 'title' ]
 
 
 
-outdir = './tmp-mirror'
-## outdir = '/sports/rsssf/mirror/pages'
+
 
 write_csv( "#{outdir}/pages_404.csv", rows_html_404,      headers: headers )
 write_csv( "#{outdir}/pages_pdf.csv",      rows_pdf,      headers: headers )

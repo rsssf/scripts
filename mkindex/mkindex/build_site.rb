@@ -32,71 +32,39 @@ end
 
 class Page
     ## maybe later -  read meta (title) on demand only
-    attr_reader :site, :dirname, :basename
+    attr_reader :site, :path, :dirname, :basename
+
+    attr_reader :title, :links, :backlinks
 
 
-    def initialize( site:, dirname:, basename: )
+##  page.linked_pages.count       => links
+##   page.backlink_pages.count   => backlinks
+
+    def initialize( site:,
+                    path:,
+                    title: nil,
+                    links: nil,
+                    backlinks: nil
+                  )
         @site = site    # link to (parent) site
+
+        @path = path
+
+        ## use dirname as key
+        dirname = File.dirname( path )
+        extname = File.extname( path )
+        basename = File.basename( path, extname )
 
         @dirname  = dirname
         @basename = basename
 
-        ## get meta data block via html-style comment header (in .txt)
-        ##    incl.   title, autor(s), source,  updated
-        ##  e.g.
-        ##    <!--
-        ##       title:   Austria 2024/25
-        ##       source:  https://rsssf.org/tableso/oost2025.html
-        ##       author:  Hans Schöggl
-        ##       updated: 7 Jul 2025
-        ##      -->
-        ##  -or-
-        ##      authors: Hans Schöggl and Karel Stokkermans
-        ## @meta   =   parse_meta( _read_text() )
+
+        @title   = title
+
+        @links = links
+        @backlinks = backlinks
     end
 
-
-
-    def _read_text
-        txt = read_text( "#{@site.dir}/#{dirname}/#{basename}.txt" )
-
-        ## check windows files on unix  -- remove \r - carriage return (cr)
-        ##  clean-up windows-style newlines - why? why not?
-        txt = txt.gsub( "\r\n", "\n" )
-        txt
-    end
-
-    ## note - maybe memorize (cache) txt later - why? why not?
-    ##    do NOT reread - and freeze text (to make read-only)??
-    alias_method :txt,  :_read_text
-    alias_method :text, :_read_text
-
-
-    def first  ## or use letter - used for building an a-z index
-      first = @basename[0].downcase
-      ## use underscore (_) for numerics / numbers
-      first = '_'   if  %w[0 1 2 3 4 5 6 7 8 9].include?(first)
-      first
-    end
-
-
-    def source()   @meta[:source]; end   ## (original) rsssf source url
-    def title()    @meta[:title] || 'n/a' ; end   ## (original) html page title <title></title>
-
-    ## note - author incl. authors!!
-    def author()   @meta[:author] || @meta[:authors]; end
-
-    def updated
-        ## auto-convert to date type - why? why not?
-        ##  fix/fix   maybe already upstream (always use iso-style 2026-04-22) - why? why not?
-        ##
-        ##   7 Jul 2025
-        str = @meta[:updated]
-
-        ## note - return nil if no updated entry present
-        ##   %b: Abbreviated month name (Jan, Feb)
-        str ? Date.strptime( str, '%d %b %Y' ) : nil
-    end
  end # (nested) class Page
 
 
@@ -121,10 +89,20 @@ def add( files )
         basename = File.basename( path, extname )
 
 
+        ##
+        ##  note -  dash (-) is used for n/a
+        ##          question mark (?) is used for unknown
+        title = rec['title']
+
+        ## e.g. 12/3   -  links / backlinks
+        links, backlinks  =  rec['links'].split( '/' , 2 ).map { |str| str.to_i }
+
         pages = @dirs[ dirname ] ||= []
         page = Page.new( site: self,
-                         dirname:  dirname,
-                         basename: basename )
+                         path:   path,
+                         title:   title,
+                         links:   links,
+                         backlinks: backlinks )
         pages << page
 
         print "."   if i % 10 == 0

@@ -23,8 +23,9 @@ def build_index( site, outdir: )
      folder = "\u{1F4C2}"
 
      if subdirs.size > 0
-        buf  += "<h2>#{subdirs.size} subdir(s) in #{dirname}"
-        buf  += "<h2>\n"
+        buf  += "<h2>"
+        buf  += "#{subdirs.size} subdir(s) in #{dirname}"
+        buf  += "</h2>\n"
 
         buf += "<div>"
         subdirs.each do |subdir|
@@ -40,12 +41,18 @@ def build_index( site, outdir: )
 
 
      ## pages section
-     buf  += "<h2>#{pages.size} page(s) in #{dirname}"
-     buf  += "<h2>\n"
+     buf  += "<h2>"
+     buf  += "#{pages.size} page(s) in #{dirname}"
+     buf  += "</h2>\n"
 
      buf += "<div>"
      pages.each_with_index do |page,i|
-        buf <<  page.basename  + "   "
+        buf +=  %Q{<span title="#{page.links}/#{page.backlinks}">#{page.basename}</span>}
+        buf += " "
+        url = "https://rsssf.org" + page.path
+        buf +=  %Q{<a href="#{url}">#{page.title}</a>}
+        buf += "  "
+
         buf <<  "\n"   if (i+1) % 12 == 0
      end
      buf << "\n</div>\n"
