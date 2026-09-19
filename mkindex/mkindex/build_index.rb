@@ -47,6 +47,8 @@ def build_index( site, outdir: )
      buf  += "#{pages.size} page(s) in #{dirname}"
      buf  += "</h2>\n"
 
+
+=begin
      buf += "<div>"
      pages.each_with_index do |page,i|
         buf +=  %Q{<span title="#{page.links}/#{page.backlinks}">#{page.basename}</span>}
@@ -56,7 +58,26 @@ def build_index( site, outdir: )
         buf += "<br>\n"
      end
      buf << "\n</div>\n"
+=end
 
+    ### try a table style
+     buf += "<div>\n"
+     buf += %q{<table style="width:100%">}
+     buf +="\n"
+
+     pages.each_with_index do |page,i|
+        buf += "<tr>"
+        buf += "<td><code>#{page.basename}</code></td>"
+        ## maybe use smaller font here - why? why not?
+        buf += "<td>#{page.links}/#{page.backlinks}</td>"
+        buf += "<td>"
+             url = "https://rsssf.org" + page.path
+        buf +=  %Q{<a href="#{url}">#{page.title}</a>}
+        buf += "</td>"
+        buf += "</tr>\n"
+     end
+     buf << "\n</table>\n"
+     buf << "</div>\n"
 
 
      ##  note - check for "/" and avoid
