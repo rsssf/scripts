@@ -1,9 +1,9 @@
 
 module Rsssf
 class PageConverter
- 
 
-   
+
+
   ENTITIES =  %w[
 À   &Agrave;
 Á   &Aacute;
@@ -87,7 +87,12 @@ class PageConverter
     html = html.gsub( "&Ouml;", 'Ö' )
     html = html.gsub( "&Uuml;", 'Ü' )
     html = html.gsub( "&szlig;", 'ß' )
-  
+
+    ## add nbsp (non-breaking space)  - replace with plain space for now - why? why not?
+    html = html.gsub( "&nbsp;", ' ' )
+    html = html.gsub( "&quot;", '"' )
+
+
 
     html = errata_html_entities( html )
 
@@ -103,27 +108,27 @@ class PageConverter
     ##   limit &---; to length 10 - why? why not?
 
 
-    ## check for decimal entities (mapping 1:1 to unicode) 
+    ## check for decimal entities (mapping 1:1 to unicode)
     html = html.gsub(/&#(\d+);/) do |match|
              uni =  if match == '&#307;'   ## use like Van D&#307;k  -> Van Dijk
                      'ij'
                     else
-                     [$1.to_i].pack("U")          
-                    end 
-         
+                     [$1.to_i].pack("U")
+                    end
+
               ##puts "   converting numeric html entity #{match} to unicode char #{uni}"
 
              uni
           end
 
-        
+
     html = html.gsub( /&[^; ]{1,10};/) do |match|
            ##   ignore weird edge case of &A;
            ##    e.g. [M&A; moved from pool B] - where M&A is name of club
            ##
            ##  in ital03.html:
            ###    [Eugenio Corini 22pen&36pen; Christian Vieri 69]
-           ##     Francesco Totti 31, Vincenzo Montella 49&68; Antonio Di Natale 11] 
+           ##     Francesco Totti 31, Vincenzo Montella 49&68; Antonio Di Natale 11]
 
                if match == '&A;' ||
                   match == '&36pen;' || match == '&68;'
@@ -134,17 +139,16 @@ class PageConverter
                   puts "*** WARN - #{msg}"
                   log( msg )  ## log too (see log.txt)
                end
-               
+
                match   ## pass through as is (1:1)
     end
-    
+
     html
   end
   def convert_html_entities( html, url: nil ) self.class.convert_html_entities( html, url: url ); end
- 
+
 
 
 
 end # module PageConverter
 end # module Rsssf
-

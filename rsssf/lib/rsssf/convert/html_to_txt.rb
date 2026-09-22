@@ -100,7 +100,6 @@ def html_to_txt( html, url: )
 
 
 
-
   ## remove cite
   html = html.gsub( /<CITE>([^<]+)<\/CITE>/im ) do |_|
     puts " remove cite >#{$1}<"
@@ -228,7 +227,10 @@ def html_to_txt( html, url: )
           else
                   msg = "found unprocessed html tag #{match} in >#{url}<"
                   puts "*** WARN - #{msg}"
-                  log( msg )  ## log too (see log.txt)
+
+                  ##  note - skip logging to file for now
+                  ##    too many!!!
+                  ## log( msg )  ## log too (see log.txt)
           end
           match
     end
