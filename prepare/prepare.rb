@@ -3,7 +3,9 @@
 #   $ ruby prepare/prepare.rb   dataset e.g. at/worldcup/etc.
 
 
-$LOAD_PATH.unshift( './rsssf/lib' )
+$LOAD_PATH.unshift( '/sports/rubycocos/webclient/webclient/lib' )
+$LOAD_PATH.unshift( '/sports/rubycocos/webclient/webget/lib' )
+$LOAD_PATH.unshift( '/sports/rsssf/scripts/rsssf/lib' )
 require 'rsssf'
 
 

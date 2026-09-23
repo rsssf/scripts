@@ -1,0 +1,43 @@
+####
+# quick update
+#
+
+page, encoding
+
+tableso/oost2027.html           # austria 2026/27
+tableso/oost2026.html
+
+
+tablesd/duit2026.html           # germany 2025/26
+tablese/eng2026.html            # england
+tablesf/fran2026.html           # france
+tablesi/ital2026.html           # italy
+tabless/span2026.html           # spain
+
+
+
+tablese/engcup1872.html
+tablese/engcup1873.html
+tablese/engcup1874.html
+tablese/engcup1875.html
+tablese/engcup1876.html
+tablese/engcup1877.html
+tablese/engcup1878.html
+tablese/engcup1879.html
+tablese/engcup1880.html
+tablese/engcup1881.html
+
+
+#######
+## overseas
+
+tablesm/mex2026.html
+tablesm/mex2025.html
+
+tablesu/usa2025.html
+
+
+tablesb/braz2025.html
+
+tablesa/arg2026.html
+tablesa/arg2025.html

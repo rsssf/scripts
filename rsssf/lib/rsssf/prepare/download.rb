@@ -17,6 +17,12 @@ def download_pages( pages, force: )
 ## todo / double check fix read_csv upstream
 ##    if   empty column has comment it is "" empty string otherwise
 ##                it is nil!!!  ??
+##
+##   note -- config['encoding'] is nil if column NOT present  (missing comma)
+##            e.g.     page
+##           config['encoding'] is "" if column present (but not value)
+##            e.g.     page,
+
 
     encoding = config['encoding']
     encoding = 'windows-1252'   if encoding.nil? || encoding.empty?
